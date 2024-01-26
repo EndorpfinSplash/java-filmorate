@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ObjectAbsentException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -30,7 +31,7 @@ public class UserController {
         if (users.containsKey(user.getId())) {
             throw new ObjectAbsentException("User already exists");
         }
-
+        validate(user);
         users.put(user.getId(), user);
         idCounter++;
         log.info("User was created");
@@ -41,12 +42,19 @@ public class UserController {
     public User update(@Valid @RequestBody User user) {
         Integer userId = user.getId();
         if (users.containsKey(userId)) {
+            validate(user);
             users.put(userId, user);
             log.info("User was updated");
             return user;
         }
         log.info("This user absent");
         throw new ObjectAbsentException("This user absent");
+    }
+
+    private void validate(User user) {
+        if (user.getLogin().contains(" ")) {
+            throw new ValidationException("Spaces in login forbidden!");
+        }
     }
 
 }

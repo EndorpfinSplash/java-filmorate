@@ -33,9 +33,7 @@ public class FilmController {
             throw new ObjectAbsentException("Film already exists");
         }
 
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Couldn't be earlier 1895.12.28");
-        }
+        validate(film);
         films.put(film.getId(), film);
         idCounter++;
         log.info("Film was created");
@@ -46,6 +44,7 @@ public class FilmController {
     public Film update(@Valid @RequestBody Film film) {
         int filmId = film.getId();
         if (films.containsKey(filmId)) {
+            validate(film);
             films.put(filmId, film);
             log.info("Film was updated");
             return film;
@@ -54,4 +53,9 @@ public class FilmController {
         throw new ObjectAbsentException("This film absent");
     }
 
+    private void validate(Film film) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Couldn't be earlier 1895.12.28");
+        }
+    }
 }
