@@ -23,5 +23,5 @@ public class Film {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
     @Positive
-    private short duration;
+    private int duration;
 }

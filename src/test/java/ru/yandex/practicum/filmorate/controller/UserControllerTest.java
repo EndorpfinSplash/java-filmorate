@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
@@ -11,6 +12,9 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserControllerTest extends FilmorateApplicationHandler {
+
+    private static final String ENDPOINT = "/users";
+    protected static final URI RESOURCE_URI = URI.create(SERVER_URL + ENDPOINT);
 
     @Test
     void create_emptyBody_expect400() throws IOException, InterruptedException {
@@ -44,7 +48,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
     }
 
     @Test
-    void getAll() throws IOException, InterruptedException {
+    void getAll_exp200() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .GET()
@@ -160,7 +164,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
         final User user = User.builder()
                 .login("testLogin")
                 .email("This.is.correct@Login.us")
-                .birthday(LocalDate.EPOCH) //TODO: check serialization without date
+                .birthday(LocalDate.EPOCH)
                 .build();
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(user));
         HttpRequest request = HttpRequest.newBuilder()
@@ -181,7 +185,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .login("testLogin")
                 .name("")
                 .email("This.is.correct@Login.us")
-                .birthday(LocalDate.EPOCH) //TODO: check serialization without date
+                .birthday(LocalDate.EPOCH)
                 .build();
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(user));
         HttpRequest request = HttpRequest.newBuilder()

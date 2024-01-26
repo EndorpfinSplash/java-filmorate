@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,8 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/films")
 public class FilmController {
-    static int idCounter = 1;
+    public static final LocalDate OLDEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    static int idFilmCounter = 1;
     private final HashMap<Integer, Film> films = new HashMap<>();
 
     @GetMapping
@@ -27,7 +29,7 @@ public class FilmController {
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
 
-        film.setId(idCounter);
+        film.setId(idFilmCounter);
 
         if (films.containsKey(film.getId())) {
             throw new ObjectAbsentException("Film already exists");
@@ -35,7 +37,7 @@ public class FilmController {
 
         validate(film);
         films.put(film.getId(), film);
-        idCounter++;
+        idFilmCounter++;
         log.info("Film was created");
         return film;
     }
@@ -54,8 +56,8 @@ public class FilmController {
     }
 
     private void validate(Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Couldn't be earlier 1895.12.28");
+        if (film.getReleaseDate().isBefore(OLDEST_RELEASE_DATE)) {
+            throw new ValidationException("Couldn't be earlier " + OLDEST_RELEASE_DATE.format(DateTimeFormatter.ISO_LOCAL_DATE));
         }
     }
 }
