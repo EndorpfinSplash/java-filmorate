@@ -19,13 +19,8 @@ public class UserController {
     private final HashMap<Integer, User> users = new HashMap<>();
 
     @GetMapping
-    public List<User> findAll() {
+    public List<User> getAll() {
         return new ArrayList(users.values());
-    }
-
-    @GetMapping
-    public User getUser(int userId) {
-        return users.get(userId);
     }
 
     @PostMapping
@@ -47,7 +42,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
 
         String email = user.getEmail();
 
