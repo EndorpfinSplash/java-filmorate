@@ -19,7 +19,7 @@ public abstract class FilmorateApplicationHandler {
     protected static final String SERVER_URL = "http://localhost:" + 8080;
     protected static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
-    protected static final Gson GSON =new GsonBuilder()
+    protected static final Gson GSON = new GsonBuilder()
             .serializeNulls()
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
             .create();
@@ -29,7 +29,7 @@ public abstract class FilmorateApplicationHandler {
 
     @BeforeAll
     static void setUp() {
-         applicationContext = SpringApplication.run(FilmorateApplication.class);
+        applicationContext = SpringApplication.run(FilmorateApplication.class);
     }
 
     @AfterAll
