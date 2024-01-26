@@ -2,8 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ObjectAbsentException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -15,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/users")
 public class UserController {
-
+    static int idCounter = 1;
     private final HashMap<Integer, User> users = new HashMap<>();
 
     @GetMapping
@@ -26,33 +25,28 @@ public class UserController {
     @PostMapping
     public User create(@Valid @RequestBody User user) {
 
-        String email = user.getEmail();
+        user.setId(idCounter);
 
-        if (email == null || email.isBlank()) {
-            throw new ValidationException("Invalid email");
-        }
-
-        if (users.containsKey(email)) {
-            throw new UserAlreadyExistException("User already exists");
+        if (users.containsKey(user.getId())) {
+            throw new ObjectAbsentException("User already exists");
         }
 
         users.put(user.getId(), user);
+        idCounter++;
         log.info("User was created");
         return user;
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-
-        String email = user.getEmail();
-
-        if (email == null || email.isBlank()) {
-            throw new ValidationException("Invalid email");
+        Integer userId = user.getId();
+        if (users.containsKey(userId)) {
+            users.put(userId, user);
+            log.info("User was updated");
+            return user;
         }
-
-        users.put(user.getId(), user);
-        log.info("User was updated");
-        return user;
+        log.info("This user absent");
+        throw new ObjectAbsentException("This user absent");
     }
 
 }

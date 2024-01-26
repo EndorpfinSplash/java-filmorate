@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 /**
@@ -14,13 +14,19 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode
 public class User {
-    private int id;
+    private Integer id;
     @Email
     private String email;
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "login may not be null")
     private String login;
-    @EqualsAndHashCode.Exclude
     private String name;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Past
     private LocalDate birthday;
+
+    public String getName() {
+        return name==null?login:name;
+    }
+
+    //    @EqualsAndHashCode.Exclude
 }

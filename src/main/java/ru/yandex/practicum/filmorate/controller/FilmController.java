@@ -2,10 +2,12 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.ObjectAbsentException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/films")
 public class FilmController {
+    static int idCounter = 1;
     private final HashMap<Integer, Film> films = new HashMap<>();
 
     @GetMapping
@@ -24,23 +27,31 @@ public class FilmController {
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
 
-        int filmId = film.getId();
+        film.setId(idCounter);
 
-        if (films.containsKey(filmId)) {
-            throw new UserAlreadyExistException("Film already exists");
+        if (films.containsKey(film.getId())) {
+            throw new ObjectAbsentException("Film already exists");
         }
 
-        films.put(filmId, film);
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Couldn't be earlier 1895.12.28");
+        }
+        films.put(film.getId(), film);
+        idCounter++;
         log.info("Film was created");
         return film;
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
-
-        films.put(film.getId(), film);
-        log.info("Film was updated");
-        return film;
+        int filmId = film.getId();
+        if (films.containsKey(filmId)) {
+            films.put(filmId, film);
+            log.info("Film was updated");
+            return film;
+        }
+        log.info("This film absent");
+        throw new ObjectAbsentException("This film absent");
     }
 
 }
