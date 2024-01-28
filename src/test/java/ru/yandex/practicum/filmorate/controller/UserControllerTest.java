@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.io.IOException;
@@ -15,6 +17,9 @@ class UserControllerTest extends FilmorateApplicationHandler {
 
     private static final String ENDPOINT = "/users";
     protected static final URI RESOURCE_URI = URI.create(SERVER_URL + ENDPOINT);
+
+    @Autowired
+    ObjectMapper userMapper;
 
     @Test
     void create_emptyBody_expect400() throws IOException, InterruptedException {
@@ -66,7 +71,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .email("Andrew@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(updatedUser));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(userMapper.writeValueAsString(updatedUser));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -86,7 +91,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .email("@Andrew@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(updatedUser));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(userMapper.writeValueAsString(updatedUser));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -103,7 +108,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .email("This.is.correct@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(user));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(userMapper.writeValueAsString(user));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -118,7 +123,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
         final User user = User.builder()
                 .login("AndrewLogin")
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(user));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(userMapper.writeValueAsString(user));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -133,7 +138,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
         final User user = User.builder()
                 .email("This.is.correct@Login.us")
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(user));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(userMapper.writeValueAsString(user));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -149,7 +154,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .login("")
                 .email("This.is.correct@Login.us")
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(user));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(userMapper.writeValueAsString(user));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -166,14 +171,14 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .email("This.is.correct@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(user));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(userMapper.writeValueAsString(user));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
                 .POST(body)
                 .build();
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        User savedUser = GSON.fromJson(response.body(), User.class);
+        User savedUser = userMapper.readValue(response.body(), User.class);
         String expectedName = user.getLogin();
         String actualName = savedUser.getName();
         assertEquals(expectedName, actualName);
@@ -187,14 +192,14 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .email("This.is.correct@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(user));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(userMapper.writeValueAsString(user));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
                 .POST(body)
                 .build();
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        User savedUser = GSON.fromJson(response.body(), User.class);
+        User savedUser = userMapper.readValue(response.body(), User.class);
         String expectedName = user.getLogin();
         String actualName = savedUser.getName();
         assertEquals(expectedName, actualName);
@@ -208,7 +213,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .email("This.is.correct@Login.us")
                 .birthday(LocalDate.now().plusDays(1))
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(user));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(userMapper.writeValueAsString(user));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")

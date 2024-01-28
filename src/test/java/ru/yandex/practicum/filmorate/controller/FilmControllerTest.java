@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.io.IOException;
@@ -15,6 +17,8 @@ class FilmControllerTest extends FilmorateApplicationHandler {
 
     private static final String ENDPOINT = "/films";
     private static final URI RESOURCE_URI = URI.create(SERVER_URL + ENDPOINT);
+    @Autowired
+    ObjectMapper filmMapper;
 
     @Test
     void create_emptyBody_expect400() throws IOException, InterruptedException {
@@ -36,7 +40,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(film));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(filmMapper.writeValueAsString(film));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -68,7 +72,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(film));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(filmMapper.writeValueAsString(film));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -85,7 +89,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(film));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(filmMapper.writeValueAsString(film));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -103,7 +107,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(film));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(filmMapper.writeValueAsString(film));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -121,7 +125,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(film));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(filmMapper.writeValueAsString(film));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -140,7 +144,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
                 .duration(120)
                 .releaseDate(LocalDate.of(1894, 1, 1))
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(film));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(filmMapper.writeValueAsString(film));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")
@@ -158,7 +162,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
                 .duration(-120)
                 .releaseDate(LocalDate.of(1894, 1, 1))
                 .build();
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(GSON.toJson(film));
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(filmMapper.writeValueAsString(film));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
                 .header("Content-Type", "application/json")

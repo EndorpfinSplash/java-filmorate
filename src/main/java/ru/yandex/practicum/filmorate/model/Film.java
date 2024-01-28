@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class Film {
+    public static final LocalDate OLDEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+
     private Integer id;
     @NotBlank
     private String name;

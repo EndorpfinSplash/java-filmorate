@@ -8,17 +8,17 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.model.Film.OLDEST_RELEASE_DATE;
+
 @RestController
 @Slf4j
 @RequestMapping("/films")
 public class FilmController {
-    private static final LocalDate OLDEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
     private int idFilmCounter = 1;
     private final HashMap<Integer, Film> films = new HashMap<>();
 
