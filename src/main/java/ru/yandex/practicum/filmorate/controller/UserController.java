@@ -27,11 +27,11 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        log.info("POST request to create user received.");
+        log.info("POST request to create " + user + " received.");
         user.setId(idCounter);
 
         if (users.containsKey(user.getId())) {
-            throw new UserAlreadyExistException(user +" already exists in the list");
+            throw new UserAlreadyExistException(user + " already exists in the list");
         }
         validateUser(user);
         users.put(user.getId(), user);
@@ -42,16 +42,16 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        log.info("PUT request to update user received.");
+        log.info("PUT request to update " + user + "  received.");
         Integer userId = user.getId();
         if (users.containsKey(userId)) {
             validateUser(user);
             users.put(userId, user);
-            log.info(user +" was updated");
+            log.info(user + " was updated");
             return user;
         }
-        log.info(user +"is absent");
-        throw new UserAbsentException(user +" is absent");
+        log.info(user + "is absent");
+        throw new UserAbsentException(user + " is absent");
     }
 
     private void validateUser(User user) {

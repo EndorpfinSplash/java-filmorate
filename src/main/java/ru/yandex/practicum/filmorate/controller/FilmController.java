@@ -30,11 +30,11 @@ public class FilmController {
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        log.info("POST request to create film received.");
+        log.info("POST request to create " + film + " received.");
         film.setId(idFilmCounter);
 
         if (films.containsKey(film.getId())) {
-            throw new FilmAlreadyExistException(film +" already exists in the list");
+            throw new FilmAlreadyExistException(film + " already exists in the list");
         }
 
         validateFilm(film);
@@ -46,16 +46,16 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        log.info("PUT request to update film received.");
+        log.info("PUT request to update " + film + " received.");
         int filmId = film.getId();
         if (films.containsKey(filmId)) {
             validateFilm(film);
             films.put(filmId, film);
-            log.info(film +" was updated");
+            log.info(film + " was updated");
             return film;
         }
-        log.info(film +" absent in list");
-        throw new FilmAbsentException(film +" absent");
+        log.info(film + " absent in list");
+        throw new FilmAbsentException(film + " absent");
     }
 
     private void validateFilm(Film film) {
