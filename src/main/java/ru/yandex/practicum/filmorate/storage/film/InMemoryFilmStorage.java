@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.FilmAbsentException;
 import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
@@ -41,5 +42,12 @@ public class InMemoryFilmStorage implements FilmStorage {
             return film;
         }
         throw new FilmAbsentException(film + " absent");
+    }
+
+    @Override
+    public Film getFilm(Integer id) {
+        return films.computeIfAbsent(id, integer -> {
+            throw new FilmNotFoundException(String.format("Film with id=%s absent", id));
+        });
     }
 }

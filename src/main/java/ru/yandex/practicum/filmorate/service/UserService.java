@@ -28,4 +28,18 @@ public class UserService {
     public User update(User user) {
         return userStorage.update(user);
     }
+
+    public User getUser(Integer id) {
+        return userStorage.getUser(id);
+    }
+
+    // как добавление в друзья, удаление из друзей, вывод списка общих друзей.
+    public void createFriendship(Integer friend1, Integer friend2) {
+        User friend1User = getUser(friend1);
+        User friend2User = getUser(friend2);
+        friend1User.getFriends().add(friend2);
+        friend2User.getFriends().add(friend1);
+//        userStorage.update(friend1User);
+//        userStorage.update(friend2User);
+    }
 }

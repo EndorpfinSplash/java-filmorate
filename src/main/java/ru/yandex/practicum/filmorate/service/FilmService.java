@@ -11,7 +11,7 @@ import java.util.Collection;
 @Service
 public class FilmService {
 
-   @Qualifier("inMemoryFilmStorage")
+    @Qualifier("inMemoryFilmStorage")
     private final FilmStorage filmStorage;
 
     @Autowired
@@ -21,6 +21,10 @@ public class FilmService {
 
     public Collection<Film> getAll() {
         return filmStorage.getAll();
+    }
+
+    public Film getFilm(Integer id) {
+        return filmStorage.getFilm(id);
     }
 
     public Film update(Film film) {

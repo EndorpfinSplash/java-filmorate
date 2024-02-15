@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * Film.
@@ -28,6 +29,8 @@ public class User {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Past
     private LocalDate birthday;
+
+    private Set<Integer> friends;
 
     public String getName() {
         return (name == null || name.isEmpty()) ? login : name;

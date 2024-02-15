@@ -28,6 +28,12 @@ public class UserController {
         return userService.getAll();
     }
 
+    @GetMapping("/{id}")
+    public User getFilm(@PathVariable("id") Integer id) {
+        log.info("GET request to fetch user received.");
+        return userService.getUser(id);
+    }
+
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
         log.info("POST request to create " + user + " received.");
@@ -45,6 +51,14 @@ public class UserController {
         log.info(user + " was updated");
         return createdUser;
     }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void makeFriendship(@PathVariable Integer id, @PathVariable Integer friendId) {
+        log.info("PUT request to create friendship.");
+        userService.createFriendship(id, friendId);
+        log.info("Friendship has created");
+    }
+
 
     private void validateUser(User user) {
         if (user.getLogin().contains(" ")) {
