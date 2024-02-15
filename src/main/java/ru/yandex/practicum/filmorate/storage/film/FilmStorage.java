@@ -1,8 +1,15 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.Film;
 
-@Repository
+import java.util.Collection;
+
+
 public interface FilmStorage {
+    Collection<Film> getAll();
+
+    Film create(Film film);
+
+    Film update(Film film);
 
 }

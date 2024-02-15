@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,43 +30,26 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    private int idFilmCounter = 1;
-    private final HashMap<Integer, Film> films = new HashMap<>();
-
     @GetMapping
-    public List<Film> getAllFilms() {
-        log.info("GET request to fetch list of films received.");
-        return new ArrayList(films.values());
+    public Collection<Film> getAllFilms() {
+        log.info("GET request to fetch collection of films received.");
+        return filmService.getAll();
     }
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        log.info("POST request to create " + film + " received.");
-        film.setId(idFilmCounter);
-
-        if (films.containsKey(film.getId())) {
-            throw new FilmAlreadyExistException(film + " already exists in the list");
-        }
-
+        log.info("POST request to create {} received.", film);
         validateFilm(film);
-        films.put(film.getId(), film);
-        idFilmCounter++;
         log.info(film + " was created");
-        return film;
+        return filmService.create(film);
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        log.info("PUT request to update " + film + " received.");
-        int filmId = film.getId();
-        if (films.containsKey(filmId)) {
-            validateFilm(film);
-            films.put(filmId, film);
-            log.info(film + " was updated");
-            return film;
-        }
-        log.info(film + " absent in list");
-        throw new FilmAbsentException(film + " absent");
+        log.info("PUT request to update {} received.", film);
+        validateFilm(film);
+        log.info(film + " was updated");
+        return filmService.update(film);
     }
 
     private void validateFilm(Film film) {
