@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmAbsentException;
 import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +21,14 @@ import static ru.yandex.practicum.filmorate.model.Film.OLDEST_RELEASE_DATE;
 @Slf4j
 @RequestMapping("/films")
 public class FilmController {
+
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
+
     private int idFilmCounter = 1;
     private final HashMap<Integer, Film> films = new HashMap<>();
 
