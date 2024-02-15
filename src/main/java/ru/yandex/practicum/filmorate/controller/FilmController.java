@@ -3,18 +3,13 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmAbsentException;
-import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 
 import static ru.yandex.practicum.filmorate.model.Film.OLDEST_RELEASE_DATE;
 
@@ -40,8 +35,9 @@ public class FilmController {
     public Film createFilm(@Valid @RequestBody Film film) {
         log.info("POST request to create {} received.", film);
         validateFilm(film);
+        Film createdFilm = filmService.create(film);
         log.info(film + " was created");
-        return filmService.create(film);
+        return createdFilm;
     }
 
     @PutMapping

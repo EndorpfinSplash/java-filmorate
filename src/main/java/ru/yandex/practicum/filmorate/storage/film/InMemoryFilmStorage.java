@@ -7,11 +7,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Optional;
 
 @Repository
-public class InMemoryFileStorage
-        implements FilmStorage {
+public class InMemoryFilmStorage implements FilmStorage {
     private int idFilmCounter = 1;
     private final HashMap<Integer, Film> films = new HashMap<>();
 
@@ -23,9 +21,9 @@ public class InMemoryFileStorage
 
     @Override
     public Film create(Film film) {
-
-        film.setId(idFilmCounter);
-
+        if (film.getId() == null) {
+            film.setId(idFilmCounter);
+        }
         if (films.containsKey(film.getId())) {
             throw new FilmAlreadyExistException(film + " already exists in the list");
         }

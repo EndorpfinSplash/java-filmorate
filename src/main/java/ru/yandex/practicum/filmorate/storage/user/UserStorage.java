@@ -1,7 +1,14 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.User;
+
+import java.util.Collection;
 
 public interface UserStorage {
+    Collection<User> getAll();
+
+    User create(User user);
+
+    User update(User user);
 
 }
