@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -29,9 +30,21 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getFilm(@PathVariable("id") Integer id) {
+    public User getUser(@PathVariable("id") Integer id) {
         log.info("GET request to fetch user received.");
         return userService.getUser(id);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getUserFriends(@PathVariable("id") Integer id) {
+        log.info("GET request to fetch user's friends received.");
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getUserCommonFriends(@PathVariable("id") Integer id, @PathVariable("otherId") Integer otherId) {
+        log.info("GET request to fetch user's common friends with other received.");
+        return userService.getCommonFriends(id, otherId);
     }
 
     @PostMapping
@@ -56,6 +69,13 @@ public class UserController {
     public void makeFriendship(@PathVariable Integer id, @PathVariable Integer friendId) {
         log.info("PUT request to create friendship.");
         userService.createFriendship(id, friendId);
+        log.info("Friendship has created");
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriendship(@PathVariable Integer id, @PathVariable Integer friendId) {
+        log.info("PUT request to create friendship.");
+        userService.deleteFriendship(id, friendId);
         log.info("Friendship has created");
     }
 
