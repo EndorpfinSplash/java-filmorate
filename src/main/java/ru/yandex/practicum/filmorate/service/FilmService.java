@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class FilmService {
@@ -33,5 +34,21 @@ public class FilmService {
 
     public Film create(Film film) {
         return filmStorage.create(film);
+    }
+
+    public Film setLike(Integer filmId, Integer userId) {
+        Film filmForLike = getFilm(filmId);
+        filmForLike.getLikes().add(userId);
+        return filmForLike;
+    }
+
+    public Film deleteLike(Integer filmId, Integer userId) {
+        Film filmForLike = getFilm(filmId);
+        filmForLike.getLikes().remove(userId);
+        return filmForLike;
+    }
+
+    public List<Film> getTopFilms(Integer count) {
+        return null;
     }
 }

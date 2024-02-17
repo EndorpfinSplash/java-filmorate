@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.List;
 
 import static ru.yandex.practicum.filmorate.model.Film.OLDEST_RELEASE_DATE;
 
@@ -37,6 +38,12 @@ public class FilmController {
         return filmService.getFilm(id);
     }
 
+    @GetMapping("/popular")
+    public List<Film> getTopFilms(@RequestParam(value = "count", defaultValue = "10") Integer count) {
+        log.info("GET top of {} films", count);
+        return filmService.getTopFilms(count);
+    }
+
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
         log.info("POST request to create {} received.", film);
@@ -54,6 +61,22 @@ public class FilmController {
         return filmService.update(film);
     }
 
+
+    @PutMapping("/{id}/like/{userId}")
+    public Film setLike(@PathVariable("id") Integer filmId, @PathVariable("userId") Integer userId) {
+        log.info("PUT request to set like from user_id= {} for film {}.", userId, filmId);
+
+        log.info(" Like from user_id = {} for film {} was set", userId, filmId);
+        return filmService.setLike(filmId, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Film deleteLike(@PathVariable("id") Integer filmId, @PathVariable("userId") Integer userId) {
+        log.info("PUT request to set like from user_id= {} for film {}.", userId, filmId);
+
+        log.info(" Like from user_id = {} for film {} was set", userId, filmId);
+        return filmService.deleteLike(filmId, userId);
+    }
     private void validateFilm(Film film) {
         if (film.getReleaseDate().isBefore(OLDEST_RELEASE_DATE)) {
             throw new ValidationException("Couldn't be earlier " + OLDEST_RELEASE_DATE.format(DateTimeFormatter.ISO_LOCAL_DATE));
