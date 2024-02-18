@@ -31,58 +31,58 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id") Integer id) {
-        log.info("GET request to fetch user received.");
+        log.info("GET request to fetch user_id={} received.", id);
         return userService.getUser(id);
     }
 
     @GetMapping("/{id}/friends")
     public List<User> getUserFriends(@PathVariable("id") Integer id) {
-        log.info("GET request to fetch user's friends received.");
+        log.info("GET request to fetch user_id={} friends received.", id);
         return userService.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getUserCommonFriends(@PathVariable("id") Integer id, @PathVariable("otherId") Integer otherId) {
-        log.info("GET request to fetch user's common friends with other received.");
+        log.info("GET request to fetch user_id={} common friends with other_id={} received.", id, otherId);
         return userService.getCommonFriends(id, otherId);
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        log.info("POST request to create " + user + " received.");
+        log.info("POST request to create {} received.", user);
         validateUser(user);
         User createdUser = userService.create(user);
-        log.info(user + " was created");
+        log.info("{} was created", user);
         return createdUser;
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        log.info("PUT request to update " + user + "  received.");
+        log.info("PUT request to update {} received.", user);
         validateUser(user);
         User createdUser = userService.update(user);
-        log.info(user + " was updated");
+        log.info("{} was updated", user);
         return createdUser;
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public void makeFriendship(@PathVariable Integer id, @PathVariable Integer friendId) {
-        log.info("PUT request to create friendship.");
+        log.info("PUT request to create friendship with user_id={} and friend_id={}.", id, friendId);
         userService.createFriendship(id, friendId);
-        log.info("Friendship has created");
+        log.info("Friendship  with user_id={} and friend_id={} has created.", id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriendship(@PathVariable Integer id, @PathVariable Integer friendId) {
-        log.info("PUT request to create friendship.");
+        log.info("Delete request to remove friendship user_id={} and friend_id={} has created.", id, friendId);
         userService.deleteFriendship(id, friendId);
-        log.info("Friendship has created");
+        log.info("Friendship with user_id={} and friend_id={}  has deleted.", id, friendId);
     }
 
 
     private void validateUser(User user) {
         if (user.getLogin().contains(" ")) {
-            throw new ValidationException("Spaces in login forbidden!");
+            throw new ValidationException(String.format("Spaces in login %s forbidden!", user.getLogin()));
         }
     }
 

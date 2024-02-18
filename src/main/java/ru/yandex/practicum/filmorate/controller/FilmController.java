@@ -34,7 +34,7 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable("id") Integer id) {
-        log.info("GET request to fetch film received.");
+        log.info("GET request to fetch film_id={} received.", id);
         return filmService.getFilm(id);
     }
 
@@ -64,22 +64,23 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public Film setLike(@PathVariable("id") Integer filmId, @PathVariable("userId") Integer userId) {
-        log.info("PUT request to set like from user_id= {} for film {}.", userId, filmId);
+        log.info("PUT request to set like from user_id={} for film_id={}.", userId, filmId);
 
-        log.info(" Like from user_id = {} for film {} was set", userId, filmId);
+        log.info("Like from user_id={} for film_id={} was set", userId, filmId);
         return filmService.setLike(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLike(@PathVariable("id") Integer filmId, @PathVariable("userId") Integer userId) {
-        log.info("PUT request to set like from user_id= {} for film {}.", userId, filmId);
+        log.info("PUT request to set like from user_id={} for film_id={}.", userId, filmId);
 
-        log.info(" Like from user_id = {} for film {} was set", userId, filmId);
+        log.info("Like from user_id={} for film_id={} was set", userId, filmId);
         return filmService.deleteLike(filmId, userId);
     }
+
     private void validateFilm(Film film) {
         if (film.getReleaseDate().isBefore(OLDEST_RELEASE_DATE)) {
-            throw new ValidationException("Couldn't be earlier " + OLDEST_RELEASE_DATE.format(DateTimeFormatter.ISO_LOCAL_DATE));
+            throw new ValidationException(String.format("Couldn't be earlier %s", OLDEST_RELEASE_DATE.format(DateTimeFormatter.ISO_LOCAL_DATE)));
         }
     }
 }

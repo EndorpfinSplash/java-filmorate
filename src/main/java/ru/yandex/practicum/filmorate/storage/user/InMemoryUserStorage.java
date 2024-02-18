@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.UserAbsentException;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -38,9 +37,10 @@ public class InMemoryUserStorage implements UserStorage {
         Integer userId = user.getId();
         if (users.containsKey(userId)) {
             users.put(userId, user);
+
             return user;
         }
-        throw new UserAbsentException(user + " is absent");
+        throw new UserNotFoundException(String.format("User with id=%s absent", userId));
     }
 
     @Override

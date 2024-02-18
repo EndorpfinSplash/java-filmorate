@@ -32,6 +32,9 @@ public class Film {
     private Set<Integer> likes;
 
     public Set<Integer> getLikes() {
-        return this.likes == null ? new HashSet<>() : this.likes;
+        if (this.likes == null) {
+            this.likes = new HashSet<>();
+        }
+        return this.likes;
     }
 }

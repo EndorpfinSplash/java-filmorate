@@ -33,12 +33,17 @@ public class User {
 
     private Set<Integer> friends;
 
+
     public String getName() {
         return (name == null || name.isEmpty()) ? login : name;
     }
 
     public Set<Integer> getFriends() {
-        return friends == null ? new HashSet<>() : this.friends;
+        if (friends == null) {
+            friends = new HashSet<>();
+        }
+        System.out.println("User login ={" + this.login + "} this.friends = " + this.friends);
+        return this.friends;
     }
 
     //    @EqualsAndHashCode.Exclude
