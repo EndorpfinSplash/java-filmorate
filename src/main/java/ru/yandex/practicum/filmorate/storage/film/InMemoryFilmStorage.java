@@ -8,11 +8,12 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 @Repository
 public class InMemoryFilmStorage implements FilmStorage {
     private int idFilmCounter = 1;
-    private final HashMap<Integer, Film> films = new HashMap<>();
+    private final Map<Integer, Film> films = new HashMap<>();
 
 
     @Override

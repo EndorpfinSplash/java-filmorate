@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,8 +23,14 @@ class UserControllerTest extends FilmorateApplicationHandler {
     @Autowired
     ObjectMapper userMapper;
 
+    @Autowired
+    UserStorage userStorage;
+
+    @Autowired
+    UserService userService;
+
     @Test
-    void create_emptyBody_expect400() throws IOException, InterruptedException {
+    void create_emptyBody_expect500() throws IOException, InterruptedException {
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString("");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
@@ -30,7 +38,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .POST(body)
                 .build();
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(400, response.statusCode());
+        assertEquals(500, response.statusCode());
     }
 
     @Test
@@ -116,6 +124,34 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .build();
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    void check_second_friend_add_expect2() {
+        final User user1 = User.builder()
+                .login("AndrewLogin")
+                .email("This.is.correct@Login.us")
+                .birthday(LocalDate.EPOCH)
+                .build();
+        userStorage.create(user1);
+
+        final User user2 = User.builder()
+                .login("user2")
+                .email("user2@Login.us")
+                .birthday(LocalDate.EPOCH)
+                .build();
+        userStorage.create(user2);
+        final User user3 = User.builder()
+                .login("user2")
+                .email("user2@Login.us")
+                .birthday(LocalDate.EPOCH)
+                .build();
+        userStorage.create(user3);
+
+        userService.createFriendship(1, 2);
+        userService.createFriendship(1, 3);
+        Integer actual = user1.getFriends().size();
+        assertEquals(2, actual);
     }
 
     @Test

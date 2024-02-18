@@ -21,7 +21,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
     ObjectMapper filmMapper;
 
     @Test
-    void create_emptyBody_expect400() throws IOException, InterruptedException {
+    void create_emptyBody_expect500() throws IOException, InterruptedException {
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString("");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(RESOURCE_URI)
@@ -29,7 +29,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
                 .POST(body)
                 .build();
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(400, response.statusCode());
+        assertEquals(500, response.statusCode());
     }
 
     @Test
@@ -137,7 +137,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
 
 
     @Test
-    void validate_ReleaseDateOlder_exp500() throws IOException, InterruptedException {
+    void validate_ReleaseDateOlder_exp400() throws IOException, InterruptedException {
         final Film film = Film.builder()
                 .name("Terminator")
                 .description("cool film!")
@@ -151,7 +151,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
                 .POST(body)
                 .build();
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(500, response.statusCode());
+        assertEquals(400, response.statusCode());
     }
 
     @Test

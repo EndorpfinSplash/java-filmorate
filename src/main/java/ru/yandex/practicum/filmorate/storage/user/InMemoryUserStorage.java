@@ -7,11 +7,12 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 @Repository
 public class InMemoryUserStorage implements UserStorage {
     private int idCounter = 1;
-    private final HashMap<Integer, User> users = new HashMap<>();
+    private final Map<Integer, User> users = new HashMap<>();
 
 
     @Override
@@ -45,8 +46,14 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUser(Integer id) {
-        return users.computeIfAbsent(id, integer -> {
-            throw new UserNotFoundException(String.format("User with id=%s absent", id));
-        });
+
+        if (users.containsKey(id)) {
+            return users.get(id);
+        }
+        throw new UserNotFoundException(String.format("User with id=%s absent", id));
+
+//        return users.computeIfAbsent(id, integer -> {
+//            throw new UserNotFoundException(String.format("User with id=%s absent", id));
+//        });
     }
 }

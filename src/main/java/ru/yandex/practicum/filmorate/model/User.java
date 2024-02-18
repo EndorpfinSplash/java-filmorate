@@ -31,19 +31,10 @@ public class User {
     @Past
     private LocalDate birthday;
 
-    private Set<Integer> friends;
-
+    private final Set<Integer> friends = new HashSet<>();
 
     public String getName() {
         return (name == null || name.isEmpty()) ? login : name;
-    }
-
-    public Set<Integer> getFriends() {
-        if (friends == null) {
-            friends = new HashSet<>();
-        }
-        System.out.println("User login ={" + this.login + "} this.friends = " + this.friends);
-        return this.friends;
     }
 
     //    @EqualsAndHashCode.Exclude

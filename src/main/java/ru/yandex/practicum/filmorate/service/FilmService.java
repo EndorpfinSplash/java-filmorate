@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -41,14 +40,14 @@ public class FilmService {
     }
 
     public Film setLike(Integer filmId, Integer userId) {
-        Film filmForLike = getFilm(filmId);
+        Film filmForLike = filmStorage.getFilm(filmId);
         filmForLike.getLikes().add(userId);
         return filmForLike;
     }
 
     public Film deleteLike(Integer filmId, Integer userId) {
         Film filmForLike = getFilm(filmId);
-        User user = userStorage.getUser(userId);
+        userStorage.getUser(userId);
         filmForLike.getLikes().remove(userId);
         return filmForLike;
     }

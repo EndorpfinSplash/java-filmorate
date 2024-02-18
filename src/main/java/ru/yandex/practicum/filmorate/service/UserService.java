@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,28 +42,25 @@ public class UserService {
         User friend2User = userStorage.getUser(friend2);
         friend1User.getFriends().add(friend2);
         friend2User.getFriends().add(friend1);
-        userStorage.update(friend1User);
-        userStorage.update(friend2User);
     }
 
     public void deleteFriendship(Integer friend1, Integer friend2) {
-        User friend1User = getUser(friend1);
-        User friend2User = getUser(friend2);
+        User friend1User = userStorage.getUser(friend1);
+        User friend2User = userStorage.getUser(friend2);
         friend1User.getFriends().remove(friend2);
         friend2User.getFriends().remove(friend1);
     }
 
     public List<User> getFriends(Integer userId) {
-        User user = getUser(userId);
+        User user = userStorage.getUser(userId);
         return user.getFriends().stream().map(userStorage::getUser).collect(Collectors.toList());
     }
-
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
         User user = getUser(id);
         User otherUser = getUser(otherId);
 
-        Set<Integer> intersectedFriendsId = user.getFriends();
+        Set<Integer> intersectedFriendsId = new HashSet<>(user.getFriends());
         intersectedFriendsId.retainAll(otherUser.getFriends());
 
         return intersectedFriendsId.stream().map(userStorage::getUser).collect(Collectors.toList());

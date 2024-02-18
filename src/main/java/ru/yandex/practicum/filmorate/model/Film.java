@@ -29,12 +29,5 @@ public class Film {
     @Positive
     private int duration;
 
-    private Set<Integer> likes;
-
-    public Set<Integer> getLikes() {
-        if (this.likes == null) {
-            this.likes = new HashSet<>();
-        }
-        return this.likes;
-    }
+    private final Set<Integer> likes = new HashSet<>();
 }
