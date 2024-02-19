@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.FilmAbsentException;
-import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -15,28 +14,21 @@ public class InMemoryFilmStorage implements FilmStorage {
     private int idFilmCounter = 1;
     private final Map<Integer, Film> films = new HashMap<>();
 
-
     @Override
-    public Collection<Film> getAll() {
+    public Collection<Film> getAllFilms() {
         return films.values();
     }
 
     @Override
-    public Film create(Film film) {
-        if (film.getId() == null) {
-            film.setId(idFilmCounter);
-        }
-        if (films.containsKey(film.getId())) {
-            throw new FilmAlreadyExistException(film + " already exists in the list");
-        }
-
+    public Film createFilm(Film film) {
+        film.setId(idFilmCounter);
         films.put(film.getId(), film);
         idFilmCounter++;
         return film;
     }
 
     @Override
-    public Film update(Film film) {
+    public Film updateFilm(Film film) {
         int filmId = film.getId();
         if (films.containsKey(filmId)) {
             films.put(filmId, film);
@@ -46,7 +38,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(Integer id) {
+    public Film getFilmById(Integer id) {
         return films.computeIfAbsent(id, integer -> {
             throw new FilmNotFoundException(String.format("Film with id=%s absent", id));
         });

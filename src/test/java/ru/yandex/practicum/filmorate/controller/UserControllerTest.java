@@ -133,20 +133,20 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .email("This.is.correct@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        userStorage.create(user1);
+        userStorage.createUser(user1);
 
         final User user2 = User.builder()
                 .login("user2")
                 .email("user2@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        userStorage.create(user2);
+        userStorage.createUser(user2);
         final User user3 = User.builder()
                 .login("user2")
                 .email("user2@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        userStorage.create(user3);
+        userStorage.createUser(user3);
 
         userService.createFriendship(1, 2);
         userService.createFriendship(1, 3);

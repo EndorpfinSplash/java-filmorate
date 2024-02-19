@@ -21,48 +21,48 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public Collection<User> getAll() {
-        return userStorage.getAll();
+    public Collection<User> getAllUsers() {
+        return userStorage.getAllUsers();
     }
 
-    public User create(User user) {
-        return userStorage.create(user);
+    public User createUser(User user) {
+        return userStorage.createUser(user);
     }
 
-    public User update(User user) {
-        return userStorage.update(user);
+    public User updateUser(User user) {
+        return userStorage.updateUser(user);
     }
 
-    public User getUser(Integer id) {
-        return userStorage.getUser(id);
+    public User getUserById(Integer id) {
+        return userStorage.getUserById(id);
     }
 
     public void createFriendship(Integer friend1, Integer friend2) {
-        User friend1User = userStorage.getUser(friend1);
-        User friend2User = userStorage.getUser(friend2);
+        User friend1User = userStorage.getUserById(friend1);
+        User friend2User = userStorage.getUserById(friend2);
         friend1User.getFriends().add(friend2);
         friend2User.getFriends().add(friend1);
     }
 
     public void deleteFriendship(Integer friend1, Integer friend2) {
-        User friend1User = userStorage.getUser(friend1);
-        User friend2User = userStorage.getUser(friend2);
+        User friend1User = userStorage.getUserById(friend1);
+        User friend2User = userStorage.getUserById(friend2);
         friend1User.getFriends().remove(friend2);
         friend2User.getFriends().remove(friend1);
     }
 
-    public List<User> getFriends(Integer userId) {
-        User user = userStorage.getUser(userId);
-        return user.getFriends().stream().map(userStorage::getUser).collect(Collectors.toList());
+    public List<User> getAllUserFriends(Integer userId) {
+        User user = userStorage.getUserById(userId);
+        return user.getFriends().stream().map(userStorage::getUserById).collect(Collectors.toList());
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
-        User user = getUser(id);
-        User otherUser = getUser(otherId);
+        User user = getUserById(id);
+        User otherUser = getUserById(otherId);
 
         Set<Integer> intersectedFriendsId = new HashSet<>(user.getFriends());
         intersectedFriendsId.retainAll(otherUser.getFriends());
 
-        return intersectedFriendsId.stream().map(userStorage::getUser).collect(Collectors.toList());
+        return intersectedFriendsId.stream().map(userStorage::getUserById).collect(Collectors.toList());
     }
 }

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -16,44 +15,32 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     @Override
-    public Collection<User> getAll() {
+    public Collection<User> getAllUsers() {
         return users.values();
     }
 
     @Override
-    public User create(User user) {
-        if (user.getId() == null) {
-            user.setId(idCounter);
-        }
-        if (users.containsKey(user.getId())) {
-            throw new UserAlreadyExistException(user + " already exists in the list");
-        }
+    public User createUser(User user) {
+        user.setId(idCounter);
         users.put(user.getId(), user);
         idCounter++;
         return user;
     }
 
     @Override
-    public User update(User user) {
+    public User updateUser(User user) {
         Integer userId = user.getId();
         if (users.containsKey(userId)) {
             users.put(userId, user);
-
             return user;
         }
         throw new UserNotFoundException(String.format("User with id=%s absent", userId));
     }
 
     @Override
-    public User getUser(Integer id) {
-
-        if (users.containsKey(id)) {
-            return users.get(id);
-        }
-        throw new UserNotFoundException(String.format("User with id=%s absent", id));
-
-//        return users.computeIfAbsent(id, integer -> {
-//            throw new UserNotFoundException(String.format("User with id=%s absent", id));
-//        });
+    public User getUserById(Integer id) {
+        return users.computeIfAbsent(id, integer -> {
+            throw new UserNotFoundException(String.format("User with id=%s absent", id));
+        });
     }
 }

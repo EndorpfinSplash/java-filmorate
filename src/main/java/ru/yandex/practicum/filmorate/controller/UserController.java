@@ -26,19 +26,19 @@ public class UserController {
     @GetMapping
     public Collection<User> getAllUsers() {
         log.info("GET request to fetch collection of users received.");
-        return userService.getAll();
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id") Integer id) {
         log.info("GET request to fetch user_id={} received.", id);
-        return userService.getUser(id);
+        return userService.getUserById(id);
     }
 
     @GetMapping("/{id}/friends")
     public List<User> getUserFriends(@PathVariable("id") Integer id) {
         log.info("GET request to fetch user_id={} friends received.", id);
-        return userService.getFriends(id);
+        return userService.getAllUserFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
@@ -51,7 +51,7 @@ public class UserController {
     public User createUser(@Valid @RequestBody User user) {
         log.info("POST request to create {} received.", user);
         validateUser(user);
-        User createdUser = userService.create(user);
+        User createdUser = userService.createUser(user);
         log.info("{} was created", user);
         return createdUser;
     }
@@ -60,7 +60,7 @@ public class UserController {
     public User updateUser(@Valid @RequestBody User user) {
         log.info("PUT request to update {} received.", user);
         validateUser(user);
-        User createdUser = userService.update(user);
+        User createdUser = userService.updateUser(user);
         log.info("{} was updated", user);
         return createdUser;
     }

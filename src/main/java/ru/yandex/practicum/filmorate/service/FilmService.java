@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -16,7 +15,6 @@ import static java.util.Comparator.comparingInt;
 @Service
 public class FilmService {
 
-    @Qualifier("inMemoryFilmStorage")
     private final FilmStorage filmStorage;
 
     private final UserStorage userStorage;
@@ -27,37 +25,38 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    public Collection<Film> getAll() {
-        return filmStorage.getAll();
+    public Collection<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
     }
 
-    public Film getFilm(Integer id) {
-        return filmStorage.getFilm(id);
+    public Film getFilmById(Integer id) {
+        return filmStorage.getFilmById(id);
     }
 
-    public Film update(Film film) {
-        return filmStorage.update(film);
+    public Film updateFilm(Film film) {
+        return filmStorage.updateFilm(film);
     }
 
-    public Film create(Film film) {
-        return filmStorage.create(film);
+    public Film createFilm(Film film) {
+        return filmStorage.createFilm(film);
     }
 
-    public Film setLike(Integer filmId, Integer userId) {
-        Film filmForLike = filmStorage.getFilm(filmId);
+    public Film setLikeForFilm(Integer filmId, Integer userId) {
+        Film filmForLike = filmStorage.getFilmById(filmId);
+        userStorage.getUserById(userId);
         filmForLike.getLikes().add(userId);
         return filmForLike;
     }
 
-    public Film deleteLike(Integer filmId, Integer userId) {
-        Film filmForLike = filmStorage.getFilm(filmId);
-        userStorage.getUser(userId);
+    public Film deleteLikeFromFilm(Integer filmId, Integer userId) {
+        Film filmForLike = filmStorage.getFilmById(filmId);
+        userStorage.getUserById(userId);
         filmForLike.getLikes().remove(userId);
         return filmForLike;
     }
 
     public List<Film> getTopFilms(Integer count) {
-        return filmStorage.getAll().stream()
+        return filmStorage.getAllFilms().stream()
                 .sorted(comparingInt(film -> -1 * film.getLikes().size()))
                 .limit(count)
                 .collect(Collectors.toList());

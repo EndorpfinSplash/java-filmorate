@@ -29,13 +29,13 @@ public class FilmController {
     @GetMapping
     public Collection<Film> getAllFilms() {
         log.info("GET request to fetch collection of films received.");
-        return filmService.getAll();
+        return filmService.getAllFilms();
     }
 
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable("id") Integer id) {
         log.info("GET request to fetch film_id={} received.", id);
-        return filmService.getFilm(id);
+        return filmService.getFilmById(id);
     }
 
     @GetMapping("/popular")
@@ -48,7 +48,7 @@ public class FilmController {
     public Film createFilm(@Valid @RequestBody Film film) {
         log.info("POST request to create {} received.", film);
         validateFilm(film);
-        Film createdFilm = filmService.create(film);
+        Film createdFilm = filmService.createFilm(film);
         log.info(film + " was created");
         return createdFilm;
     }
@@ -58,7 +58,7 @@ public class FilmController {
         log.info("PUT request to update {} received.", film);
         validateFilm(film);
         log.info(film + " was updated");
-        return filmService.update(film);
+        return filmService.updateFilm(film);
     }
 
 
@@ -67,7 +67,7 @@ public class FilmController {
         log.info("PUT request to set like from user_id={} for film_id={}.", userId, filmId);
 
         log.info("Like from user_id={} for film_id={} was set", userId, filmId);
-        return filmService.setLike(filmId, userId);
+        return filmService.setLikeForFilm(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
@@ -75,7 +75,7 @@ public class FilmController {
         log.info("PUT request to set like from user_id={} for film_id={}.", userId, filmId);
 
         log.info("Like from user_id={} for film_id={} was set", userId, filmId);
-        return filmService.deleteLike(filmId, userId);
+        return filmService.deleteLikeFromFilm(filmId, userId);
     }
 
     private void validateFilm(Film film) {
