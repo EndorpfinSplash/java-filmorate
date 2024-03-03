@@ -19,7 +19,7 @@ WHEN NOT MATCHED THEN
     VALUES (b.tiltle);
 
 
-MERGE INTO MVP_DICTIONARY mvp
+MERGE INTO MPA_DICTIONARY mvp
     USING (SELECT 'G' AS tiltle, 'у фильма нет возрастных ограничений' as DESCRIPTION
            FROM dual
            union

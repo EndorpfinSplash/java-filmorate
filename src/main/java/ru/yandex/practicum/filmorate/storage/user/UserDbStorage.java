@@ -35,7 +35,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUserById(Integer id) {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from FILM where id = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from APPLICATION_USER where id = ?", id);
         // вы заполните данные пользователя в следующем уроке
         User user = new User();
         user.setId(id);
