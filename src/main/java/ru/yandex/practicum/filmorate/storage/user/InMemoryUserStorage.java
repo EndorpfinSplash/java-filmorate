@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class InMemoryUserStorage implements UserStorage {
@@ -38,9 +39,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(Integer id) {
-        return users.computeIfAbsent(id, integer -> {
-            throw new UserNotFoundException(String.format("User with id=%s absent", id));
-        });
+    public Optional<User> getUserById(Integer id) {
+        return Optional.of(users.get(id));
     }
 }

@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.Collection;
+import java.util.Set;
 
 
 @Component
@@ -40,5 +41,12 @@ public class UtilsDbStorage {
         Genre genre = new Genre();
         genre.setId(id);
         return genre;
+    }
+
+    public Set<Integer> getUserFriendsId(Integer id) {
+        SqlRowSet friendsRows = jdbcTemplate.queryForRowSet("select * from GENRE_DICTIONARY where id = ?", id);
+
+
+        return null;
     }
 }
