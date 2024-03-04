@@ -2,11 +2,15 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.utils.UtilsDbStorage;
 
+import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Set;
 
 @Service
 public class UtilsService {
@@ -27,12 +31,22 @@ public class UtilsService {
     }
 
 
-    public Mpa getMpaById(Integer id) {
-        return utilsDbStorage.getMpaById(id);
+    public Mpa getMpaById(Integer mpaId) {
+        return utilsDbStorage.getMpaById(mpaId)
+                .orElseThrow(
+                        () -> new MpaNotFoundException(MessageFormat.format("Mpa with id={} not found", mpaId))
+                );
     }
 
-    public Genre getGenreById(Integer id) {
-        return utilsDbStorage.getGenreById(id);
+    public Genre getGenreById(Integer genreId) {
+        return utilsDbStorage.getGenreById(genreId)
+                .orElseThrow(
+                        () -> new GenreNotFoundException(MessageFormat.format("Genre with id={} not found", genreId))
+                );
+    }
+
+    public Set<Integer> getUserFriendsId(Integer userId) {
+        return utilsDbStorage.getUserFriendsId(userId);
     }
 
 }
