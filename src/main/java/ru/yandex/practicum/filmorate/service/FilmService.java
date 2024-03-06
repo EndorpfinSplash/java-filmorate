@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
@@ -35,8 +34,11 @@ public class FilmService {
         return filmStorage.getAllFilms();
     }
 
-    public Optional<Film> getFilmById(Integer filmId) {
-        return filmStorage.getFilmById(filmId);
+    public Film getFilmById(Integer filmId) {
+        return filmStorage.getFilmById(filmId).orElseThrow(
+                () -> new FilmNotFoundException(String.format("Film with id=%s absent", filmId))
+        );
+
     }
 
     public Film updateFilm(Film film) {

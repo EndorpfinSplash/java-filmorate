@@ -3,14 +3,12 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @Component
@@ -43,12 +41,28 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        return null;
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("APPLICATION_USER")
+                .usingGeneratedKeyColumns("ID");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("ID", user.getId());
+        parameters.put("NAME", user.getName());
+        parameters.put("LOGIN", user.getLogin());
+        parameters.put("EMAIL", user.getEmail());
+        parameters.put("BIRTHDAY", user.getBirthday());
+
+        Integer id = simpleJdbcInsert.execute(parameters);
+        user.setId(id);
+        return user;
     }
 
     @Override
     public User updateUser(User user) {
-        return null;
+        int updated = -1;
+        updated = jdbcTemplate.update(
+                "UPDATE APPLICATION_USER set Name =?, LOGIN =?, EMAIL=?, BIRTHDAY = ? where ID = ?",
+                user.getName(), user.getLogin(), user.getEmail(), user.getBirthday(), user.getId());
+        return updated >= 0 ? user : null;
     }
 
     @Override
