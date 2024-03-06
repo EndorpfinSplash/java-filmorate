@@ -35,6 +35,6 @@ public class Film {
 
     private final Set<Integer> likes = new HashSet<>();
     private final Set<Integer> genres = new HashSet<>();
-    private int mpa_id;
+    private int mpaId;
 
 }

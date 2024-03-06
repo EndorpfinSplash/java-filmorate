@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS film
     description  varchar(4000),
     release_date date,
     duration     integer,
-    mvp integer references mpa_dictionary (id) on delete NO ACTION
+    mpa_id integer references mpa_dictionary (id) on delete NO ACTION
 );
 
 CREATE TABLE IF NOT EXISTS film_genre
