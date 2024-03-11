@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ public class JdbcTemplateProvider {
     public static final String JDBC_PASSWORD = "password";
     public static final String JDBC_DRIVER = "org.h2.Driver";
 
+    @Bean
     public JdbcTemplate getJdbcTemplate() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(JDBC_DRIVER);
