@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.utils.UtilsDbStorage;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Set;
 
@@ -34,14 +33,14 @@ public class UtilsService {
     public Mpa getMpaById(Integer mpaId) {
         return utilsDbStorage.getMpaById(mpaId)
                 .orElseThrow(
-                        () -> new MpaNotFoundException(MessageFormat.format("Mpa with id={} not found", mpaId))
+                        () -> new MpaNotFoundException(String.format("Mpa with id=%d not found", mpaId))
                 );
     }
 
     public Genre getGenreById(Integer genreId) {
         return utilsDbStorage.getGenreById(genreId)
                 .orElseThrow(
-                        () -> new GenreNotFoundException(MessageFormat.format("Genre with id={} not found", genreId))
+                        () -> new GenreNotFoundException(String.format("Genre with id=%d not found", genreId))
                 );
     }
 

@@ -3,11 +3,16 @@ package ru.yandex.practicum.filmorate.storage.film;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -23,7 +28,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getAllFilms() {
-        String sql = "select * from FILM";
+        String sql = "select * from FILM order by ID";
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> {
                     Film film = Film.builder()
@@ -32,7 +37,7 @@ public class FilmDbStorage implements FilmStorage {
                             .description(rs.getString("description"))
                             .releaseDate(rs.getDate("release_date").toLocalDate())
                             .duration(rs.getInt("duration"))
-                            .mpaId(rs.getInt("mpa_id"))
+                            .mpa(Mpa.builder().id(rs.getInt("mpa_id")).build())
                             .build();
 
 //                    film.getLikes().
@@ -44,12 +49,32 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film createFilm(Film film) {
-        return null;
+        Map<String, Object> parameters = new HashMap<>();
+
+        parameters.put("TITLE", film.getName());
+        parameters.put("DESCRIPTION", film.getDescription());
+        parameters.put("RELEASE_DATE", film.getReleaseDate());
+        parameters.put("DURATION", film.getDuration());
+        parameters.put("MPA_ID", film.getMpa().getId());
+
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("FILM")
+                .usingGeneratedKeyColumns("ID");
+
+        Integer id = (Integer) simpleJdbcInsert.executeAndReturnKey(parameters);
+        film.setId(id);
+        return film;
     }
 
     @Override
     public Film updateFilm(Film film) {
-        return null;
+        int howManyUpdated = jdbcTemplate.update(
+                "UPDATE FILM set TITLE=?, DESCRIPTION=?, RELEASE_DATE=?, DURATION=?, MPA_ID=? where ID =?"
+                , film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
+        if (howManyUpdated == 0) {
+            throw new FilmNotFoundException(String.format("Film with id =%d not found", film.getId()));
+        }
+        return film;
     }
 
     @Override
@@ -63,7 +88,7 @@ public class FilmDbStorage implements FilmStorage {
                     .description(filmRows.getString("description"))
                     .releaseDate(filmRows.getDate("release_date").toLocalDate())
                     .duration(filmRows.getInt("duration"))
-                    .mpaId(filmRows.getInt("mpa_id"))
+                    .mpa(Mpa.builder().id(filmRows.getInt("mpa_id")).build())
                     .build();
 //            Set<Integer> filmGenres = film.getGenres();
 // TODO: film likes

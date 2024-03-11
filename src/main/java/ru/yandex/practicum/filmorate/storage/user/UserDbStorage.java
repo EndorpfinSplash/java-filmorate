@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
@@ -23,7 +24,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getAllUsers() {
-        String sql = "select * from APPLICATION_USER";
+        String sql = "select * from APPLICATION_USER order by ID";
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> {
                     User user = User.builder()
@@ -58,11 +59,13 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        int updated = -1;
-        updated = jdbcTemplate.update(
-                "UPDATE APPLICATION_USER set Name =?, LOGIN =?, EMAIL=?, BIRTHDAY = ? where ID = ?",
-                user.getName(), user.getLogin(), user.getEmail(), user.getBirthday(), user.getId());
-        return updated >= 0 ? user : null;
+        int howManyUpdated = jdbcTemplate.update(
+                "UPDATE APPLICATION_USER set NAME=?, LOGIN=?, EMAIL=?, BIRTHDAY=? where ID =?"
+                , user.getName(), user.getLogin(), user.getEmail(), user.getBirthday(), user.getId());
+        if (howManyUpdated == 0) {
+            throw new UserNotFoundException(String.format("User with id =%d not found", user.getId()));
+        }
+        return user;
     }
 
     @Override

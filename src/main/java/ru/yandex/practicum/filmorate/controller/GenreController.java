@@ -13,7 +13,7 @@ import java.util.Collection;
 
 @RestController
 @Slf4j
-@RequestMapping("/genre")
+@RequestMapping("/genres")
 public class GenreController {
 
     private final UtilsService utilsService;
@@ -34,6 +34,5 @@ public class GenreController {
         log.info("GET request to fetch genre_id={} received.", id);
         return utilsService.getGenreById(id);
     }
-
 
 }
