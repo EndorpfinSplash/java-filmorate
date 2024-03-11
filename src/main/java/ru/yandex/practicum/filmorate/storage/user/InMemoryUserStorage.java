@@ -35,7 +35,7 @@ public class InMemoryUserStorage implements UserStorage {
             users.put(userId, user);
             return user;
         }
-        throw new UserNotFoundException(String.format("User with id=%s absent", userId));
+        throw new UserNotFoundException(String.format("User with id=%d absent", userId));
     }
 
     @Override

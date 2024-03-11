@@ -3,19 +3,19 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @Component
 @Slf4j
 public class UserDbStorage implements UserStorage {
+
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -25,7 +25,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getAllUsers() {
-        String sql = "select * from APPLICATION_USER";
+        String sql = "select * from APPLICATION_USER order by ID";
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> {
                     User user = User.builder()
@@ -43,12 +43,31 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        return null;
+        Map<String, Object> parameters = new HashMap<>();
+
+        parameters.put("NAME", user.getName());
+        parameters.put("LOGIN", user.getLogin());
+        parameters.put("EMAIL", user.getEmail());
+        parameters.put("BIRTHDAY", user.getBirthday());
+
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("APPLICATION_USER")
+                .usingGeneratedKeyColumns("ID");
+
+        Integer id = (Integer) simpleJdbcInsert.executeAndReturnKey(parameters);
+        user.setId(id);
+        return user;
     }
 
     @Override
     public User updateUser(User user) {
-        return null;
+        int howManyUpdated = jdbcTemplate.update(
+                "UPDATE APPLICATION_USER set NAME=?, LOGIN=?, EMAIL=?, BIRTHDAY=? where ID =?"
+                , user.getName(), user.getLogin(), user.getEmail(), user.getBirthday(), user.getId());
+        if (howManyUpdated == 0) {
+            throw new UserNotFoundException(String.format("User with id =%d not found", user.getId()));
+        }
+        return user;
     }
 
     @Override

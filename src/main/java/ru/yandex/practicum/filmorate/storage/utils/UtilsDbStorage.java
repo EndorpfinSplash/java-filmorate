@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -12,7 +13,7 @@ import java.util.*;
 
 @Component
 public class UtilsDbStorage {
-    public static final String SELECT_GENRE_BY_ID = "select * from GENRE_DICTIONARY where id = ?";
+    public static final String SELECT_GENRE_BY_ID = "SELECT * FROM GENRE_DICTIONARY where id = ?";
     public static final String SELECT_TITLE_BY_ID = "select * from MPA_DICTIONARY where id = ?";
     private final JdbcTemplate jdbcTemplate;
 
@@ -22,47 +23,55 @@ public class UtilsDbStorage {
     }
 
     public Collection<Mpa> getAllMpa() {
-        String sql = "select * from GENRE_DICTIONARY";
+        String sql = "select * from MPA_DICTIONARY order by ID";
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> Mpa.builder()
                         .id(rs.getInt("id"))
-                        .name(rs.getString("name"))
+                        .name(rs.getString("TITLE"))
                         .description(rs.getString("description"))
                         .build());
     }
 
     public Collection<Genre> getAllGenres() {
-        String sql = "select * from GENRE_DICTIONARY";
+        String sql = "select * from GENRE_DICTIONARY order by ID";
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> Genre.builder()
                         .id(rs.getInt("id"))
-                        .name(rs.getString("name"))
+                        .name(rs.getString("TITLE"))
                         .build());
     }
 
     public Optional<Mpa> getMpaById(Integer mpaId) {
-        Mpa mpa = jdbcTemplate.queryForObject(
-                SELECT_TITLE_BY_ID,
-                new Integer[]{mpaId},
-                (rs, rowNum) ->
-                        Mpa.builder()
-                                .id(rs.getInt("id"))
-                                .name(rs.getString("title"))
-                                .description(rs.getString("description"))
-                                .build()
-        );
-        return Optional.ofNullable(mpa);
+        try {
+            Mpa mpa = jdbcTemplate.queryForObject(
+                    SELECT_TITLE_BY_ID,
+                    (rs, rowNum) ->
+                            Mpa.builder()
+                                    .id(rs.getInt("id"))
+                                    .name(rs.getString("title"))
+                                    .description(rs.getString("description"))
+                                    .build(),
+                    mpaId
+            );
+            return Optional.ofNullable(mpa);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     public Optional<Genre> getGenreById(Integer genreId) {
-        Genre genre = jdbcTemplate.queryForObject(
-                SELECT_GENRE_BY_ID,
-                (rs, rowNum) -> Genre.builder()
-                        .id(rs.getInt("id"))
-                        .name(rs.getString("title"))
-                        .build(),
-                genreId);
-        return Optional.ofNullable(genre);
+        try {
+            Genre genre = jdbcTemplate.queryForObject(
+                    SELECT_GENRE_BY_ID,
+                    (rs, rowNum) -> Genre.builder()
+                            .id(rs.getInt("id"))
+                            .name(rs.getString("title"))
+                            .build(),
+                    genreId);
+            return Optional.ofNullable(genre);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     public Set<Integer> getUserFriendsId(Integer userId) {
@@ -72,7 +81,5 @@ public class UtilsDbStorage {
                         "select INITIATOR from FRIENDSHIP where APPROVER = ? and APPROVE_DATE is null ";
         List<Integer> friendsIds = jdbcTemplate.query(sql, new Integer[]{userId, userId}, ResultSet::getInt);
         return new HashSet<>(friendsIds);
-
-
     }
 }

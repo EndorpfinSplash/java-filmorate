@@ -1,41 +1,46 @@
 MERGE INTO GENRE_DICTIONARY g
-    USING (SELECT 'Комедия.' AS tiltle
-           FROM dual
-           union
-           SELECT 'Драма.'
-           FROM dual
-           union
-           SELECT 'Мультфильм.'
-           FROM dual
-           union
-           SELECT 'Триллер.'
-           FROM dual
-           union
-           SELECT 'Боевик.'
-           FROM dual) b
+USING (SELECT 1 as ID, 'РљРѕРјРµРґРёСЏ' AS tiltle
+       FROM dual
+       union
+       SELECT 2, 'Р”СЂР°РјР°'
+       FROM dual
+       union
+       SELECT 3, 'РњСѓР»СЊС‚С„РёР»СЊРј'
+       FROM dual
+       union
+       SELECT 4, 'РўСЂРёР»Р»РµСЂ'
+       FROM dual
+       union
+       SELECT 5, 'Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Р№'
+       FROM dual
+       union
+       SELECT 6, 'Р‘РѕРµРІРёРє'
+       FROM dual) b
 ON (g.TITLE = b.tiltle)
 WHEN NOT MATCHED THEN
-    INSERT (TITLE)
+    INSERT
+        (TITLE)
     VALUES (b.tiltle);
 
 
 MERGE INTO MPA_DICTIONARY mvp
-    USING (SELECT 'G' AS tiltle, 'у фильма нет возрастных ограничений' as DESCRIPTION
-           FROM dual
-           union
-           SELECT 'PG', 'детям рекомендуется смотреть фильм с родителями'
-           FROM dual
-           union
-           SELECT 'PG-13', 'детям до 13 лет просмотр не желателен'
-           FROM dual
-           union
-           SELECT 'R', 'лицам до 17 лет просматривать фильм можно только в присутствии взрослого'
-           FROM dual
-           union
-           SELECT 'NC-17', 'лицам до 18 лет просмотр запрещён'
-           FROM dual) b
+USING (SELECT 1 as ID, 'G' AS tiltle, 'Сѓ С„РёР»СЊРјР° РЅРµС‚ РІРѕР·СЂР°СЃС‚РЅС‹С… РѕРіСЂР°РЅРёС‡РµРЅРёР№' as DESCRIPTION
+       FROM dual
+       union
+       SELECT 2, 'PG', 'РґРµС‚СЏРј СЂРµРєРѕРјРµРЅРґСѓРµС‚СЃСЏ СЃРјРѕС‚СЂРµС‚СЊ С„РёР»СЊРј СЃ СЂРѕРґРёС‚РµР»СЏРјРё'
+       FROM dual
+       union
+       SELECT 3, 'PG-13', 'РґРµС‚СЏРј РґРѕ 13 Р»РµС‚ РїСЂРѕСЃРјРѕС‚СЂ РЅРµ Р¶РµР»Р°С‚РµР»РµРЅ'
+       FROM dual
+       union
+       SELECT 4, 'R', 'Р»РёС†Р°Рј РґРѕ 17 Р»РµС‚ РїСЂРѕСЃРјР°С‚СЂРёРІР°С‚СЊ С„РёР»СЊРј РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РІ РїСЂРёСЃСѓС‚СЃС‚РІРёРё РІР·СЂРѕСЃР»РѕРіРѕ'
+       FROM dual
+       union
+       SELECT 5, 'NC-17', 'Р»РёС†Р°Рј РґРѕ 18 Р»РµС‚ РїСЂРѕСЃРјРѕС‚СЂ Р·Р°РїСЂРµС‰С‘РЅ'
+       FROM dual) b
 ON (mvp.TITLE = b.tiltle)
 WHEN NOT MATCHED THEN
-    INSERT (TITLE, DESCRIPTION)
+    INSERT
+        (TITLE, DESCRIPTION)
     VALUES (b.tiltle, b.DESCRIPTION);
 

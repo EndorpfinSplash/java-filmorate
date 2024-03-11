@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -12,7 +11,6 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
@@ -35,8 +33,11 @@ public class FilmService {
         return filmStorage.getAllFilms();
     }
 
-    public Optional<Film> getFilmById(Integer filmId) {
-        return filmStorage.getFilmById(filmId);
+    public Film getFilmById(Integer filmId) {
+        return filmStorage.getFilmById(filmId)
+                .orElseThrow(
+                        () -> new FilmNotFoundException(MessageFormat.format("Film with id={} not found", filmId))
+                );
     }
 
     public Film updateFilm(Film film) {
@@ -48,22 +49,23 @@ public class FilmService {
     }
 
     public Film setLikeForFilm(Integer filmId, Integer userId) {
-        Film filmForLike = filmStorage.getFilmById(filmId).orElseThrow(
-                () -> new FilmNotFoundException(MessageFormat.format("Film with id={} not found", filmId)));
-        userStorage.getUserById(userId).orElseThrow(
-                () -> new UserNotFoundException(MessageFormat.format("User with id={} not found", userId)));
-
-        filmForLike.getLikes().add(userId);
-        return filmForLike;
+        Film film = filmStorage.getFilmById(filmId)
+                .orElseThrow(
+                        () -> new FilmNotFoundException(MessageFormat.format("Film with id={} not found", filmId))
+                );
+        userStorage.getUserById(userId);
+        film.getLikes().add(userId);
+        return film;
     }
 
     public Film deleteLikeFromFilm(Integer filmId, Integer userId) {
-        Film filmForLike = filmStorage.getFilmById(filmId).orElseThrow(
-                () -> new FilmNotFoundException(MessageFormat.format("Film with id={} not found", filmId)));
-        userStorage.getUserById(userId).orElseThrow(
-                () -> new UserNotFoundException(MessageFormat.format("User with id={} not found", userId)));
-        filmForLike.getLikes().remove(userId);
-        return filmForLike;
+        Film film = filmStorage.getFilmById(filmId)
+                .orElseThrow(
+                        () -> new FilmNotFoundException(MessageFormat.format("Film with id={} not found", filmId))
+                );
+        userStorage.getUserById(userId);
+        film.getLikes().remove(userId);
+        return film;
     }
 
     public List<Film> getTopFilms(Integer count) {
