@@ -52,7 +52,7 @@ public class UserDbStorage implements UserStorage {
         parameters.put("EMAIL", user.getEmail());
         parameters.put("BIRTHDAY", user.getBirthday());
 
-        Integer id = simpleJdbcInsert.execute(parameters);
+        Integer id = (Integer) simpleJdbcInsert.executeAndReturnKey(parameters);
         user.setId(id);
         return user;
     }
