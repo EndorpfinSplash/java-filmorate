@@ -37,12 +37,14 @@ public class FilmService {
     public Film getFilmById(Integer filmId) {
         return filmStorage.getFilmById(filmId)
                 .orElseThrow(
-                        () -> new FilmNotFoundException(MessageFormat.format("Film with id={} not found", filmId))
+                        () -> new FilmNotFoundException(MessageFormat.format("Film with id={0} not found", filmId))
                 );
     }
 
     public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
+        return filmStorage.updateFilm(film).orElseThrow(
+                () -> new FilmNotFoundException(MessageFormat.format("Film with id={0} not found", film.getId()))
+        );
     }
 
     public Film createFilm(Film film) {
@@ -50,20 +52,20 @@ public class FilmService {
     }
 
     public Film setLikeForFilm(Integer filmId, Integer userId) {
-        Film film = filmStorage.getFilmById(filmId)
-                .orElseThrow(
-                        () -> new FilmNotFoundException(MessageFormat.format("Film with id={} not found", filmId))
-                );
-        userStorage.getUserById(userId);
+        Film film = filmStorage.getFilmById(filmId).orElseThrow(
+                () -> new FilmNotFoundException(MessageFormat.format("Film with id={0} not found", filmId)));
+        userStorage.getUserById(userId).orElseThrow(
+                () -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", userId)));
+
         film.getLikes().add(userId);
         return film;
     }
 
     public Film deleteLikeFromFilm(Integer filmId, Integer userId) {
         Film filmForLike = filmStorage.getFilmById(filmId).orElseThrow(
-                () -> new FilmNotFoundException(MessageFormat.format("Film with id={} not found", filmId)));
+                () -> new FilmNotFoundException(MessageFormat.format("Film with id={0} not found", filmId)));
         userStorage.getUserById(userId).orElseThrow(
-                () -> new UserNotFoundException(MessageFormat.format("User with id={} not found", userId)));
+                () -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", userId)));
         filmForLike.getLikes().remove(userId);
         return filmForLike;
     }

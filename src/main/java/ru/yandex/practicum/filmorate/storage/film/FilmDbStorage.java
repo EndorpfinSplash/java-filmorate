@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
@@ -49,17 +48,16 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film createFilm(Film film) {
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("FILM")
+                .usingGeneratedKeyColumns("ID");
         Map<String, Object> parameters = new HashMap<>();
-
+        parameters.put("ID", film.getId());
         parameters.put("TITLE", film.getName());
         parameters.put("DESCRIPTION", film.getDescription());
         parameters.put("RELEASE_DATE", film.getReleaseDate());
         parameters.put("DURATION", film.getDuration());
         parameters.put("MPA_ID", film.getMpa().getId());
-
-        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("FILM")
-                .usingGeneratedKeyColumns("ID");
 
         Integer id = (Integer) simpleJdbcInsert.executeAndReturnKey(parameters);
         film.setId(id);
@@ -67,14 +65,11 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film updateFilm(Film film) {
-        int howManyUpdated = jdbcTemplate.update(
-                "UPDATE FILM set TITLE=?, DESCRIPTION=?, RELEASE_DATE=?, DURATION=?, MPA_ID=? where ID =?"
-                , film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
-        if (howManyUpdated == 0) {
-            throw new FilmNotFoundException(String.format("Film with id =%d not found", film.getId()));
-        }
-        return film;
+    public Optional<Film> updateFilm(Film film) {
+        int updated = jdbcTemplate.update(
+                "UPDATE FILM set TITLE =?, DESCRIPTION =?, RELEASE_DATE=?, DURATION = ? where ID = ?",
+                film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getId());
+        return updated == 1 ? Optional.of(film) : Optional.empty();
     }
 
     @Override

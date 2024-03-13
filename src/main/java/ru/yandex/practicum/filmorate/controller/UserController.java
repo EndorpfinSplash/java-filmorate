@@ -38,7 +38,9 @@ public class UserController {
     @GetMapping("/{id}/friends")
     public List<User> getUserFriends(@PathVariable("id") Integer id) {
         log.info("GET request to fetch user_id={} friends received.", id);
-        return userService.getAllUserFriends(id);
+        List<User> allUserFriends = userService.getAllUserFriends(id);
+        log.info("User with user_id={} has next friends: {}.", id, allUserFriends);
+        return allUserFriends;
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
@@ -67,9 +69,9 @@ public class UserController {
 
     @PutMapping("/{id}/friends/{friendId}")
     public void makeFriendship(@PathVariable Integer id, @PathVariable Integer friendId) {
-        log.info("PUT request to create friendship with user_id={} and friend_id={}.", id, friendId);
+        log.info("PUT request to create friendship with initiator_id ={} and approver_id ={}.", id, friendId);
         userService.createFriendship(id, friendId);
-        log.info("Friendship  with user_id={} and friend_id={} has created.", id, friendId);
+        log.info("Request from initiator_id={} to create friendship with approver_id={} saved.", id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")

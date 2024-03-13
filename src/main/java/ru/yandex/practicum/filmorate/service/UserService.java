@@ -33,36 +33,40 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        return userStorage.updateUser(user);
+        return userStorage.updateUser(user).orElseThrow(
+                () -> new UserNotFoundException(String.format("User with id=%s absent", user.getId()))
+        );
     }
 
     public User getUserById(Integer id) {
         return userStorage.getUserById(id)
-                .orElseThrow(() ->new UserNotFoundException(MessageFormat.format("User with id={} not found", id)));
+                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", id)));
     }
 
     public void createFriendship(Integer friend1, Integer friend2) {
         User friend1User = userStorage.getUserById(friend1)
-                .orElseThrow(() ->new UserNotFoundException(MessageFormat.format("User with id={} not found", friend1)));
+                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", friend1)));
         User friend2User = userStorage.getUserById(friend2)
-                .orElseThrow(() ->new UserNotFoundException(MessageFormat.format("User with id={} not found", friend2)));
+                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", friend2)));
         friend1User.getFriends().add(friend2);
         friend2User.getFriends().add(friend1);
+        userStorage.initFriendship(friend1User, friend2User);
     }
 
     public void deleteFriendship(Integer friend1, Integer friend2) {
         User friend1User = userStorage.getUserById(friend1)
-                .orElseThrow(() ->new UserNotFoundException(MessageFormat.format("User with id={} not found", friend1)));
+                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", friend1)));
         User friend2User = userStorage.getUserById(friend2)
-                .orElseThrow(() ->new UserNotFoundException(MessageFormat.format("User with id={} not found", friend2)));
+                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", friend2)));
 
         friend1User.getFriends().remove(friend2);
         friend2User.getFriends().remove(friend1);
+        userStorage.deleteFriendship(friend1User, friend2User);
     }
 
     public List<User> getAllUserFriends(Integer userId) {
         User user = userStorage.getUserById(userId)
-                .orElseThrow(() ->new UserNotFoundException(MessageFormat.format("User with id={} not found", userId)));
+                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", userId)));
         return user.getFriends().stream()
                 .map(userIdentifier -> userStorage.getUserById(userIdentifier).get())
                 .collect(Collectors.toList());
@@ -70,10 +74,10 @@ public class UserService {
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
         User user = userStorage.getUserById(id)
-                .orElseThrow(() ->new UserNotFoundException(MessageFormat.format("User with id={} not found", id)));
+                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", id)));
 
         User otherUser = userStorage.getUserById(otherId)
-                .orElseThrow(() ->new UserNotFoundException(MessageFormat.format("User with id={} not found", otherId)));
+                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", otherId)));
 
         Set<Integer> intersectedFriendsId = new HashSet<>(user.getFriends());
         intersectedFriendsId.retainAll(otherUser.getFriends());

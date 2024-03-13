@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice("ru.yandex.practicum.filmorate")
+@Slf4j
 public class FilmorateExceptionsHandler {
 
     @ExceptionHandler(ValidationException.class)
@@ -18,8 +20,7 @@ public class FilmorateExceptionsHandler {
             UserNotFoundException.class,
             FilmNotFoundException.class,
             MpaNotFoundException.class,
-            GenreNotFoundException.class
-    })
+            GenreNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse catchNotFound(final RuntimeException e) {
         return new ErrorResponse("Not found exception", e.getMessage());
@@ -28,6 +29,7 @@ public class FilmorateExceptionsHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse catchValidation(final RuntimeException e) {
+        log.info("Failed with error: {}", e.getStackTrace());
         return new ErrorResponse("Application error", e.getMessage());
     }
 

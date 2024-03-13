@@ -10,7 +10,11 @@ public interface UserStorage {
 
     User createUser(User user);
 
-    User updateUser(User user);
+    Optional<User> updateUser(User user);
 
     Optional<User> getUserById(Integer id);
+
+    boolean initFriendship(final User initiator, final User approver);
+
+    boolean deleteFriendship(final User initiator, final User approver);
 }

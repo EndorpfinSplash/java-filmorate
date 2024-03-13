@@ -11,7 +11,7 @@ public interface FilmStorage {
 
     Film createFilm(Film film);
 
-    Film updateFilm(Film film);
+    Optional<Film> updateFilm(Film film);
 
     Optional<Film> getFilmById(Integer id);
 }
