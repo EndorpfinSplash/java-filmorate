@@ -26,15 +26,17 @@ public class UserDbStorage implements UserStorage {
         String sql = "select * from APPLICATION_USER order by ID";
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> {
+                    int userId = rs.getInt("id");
                     User user = User.builder()
-                            .id(rs.getInt("id"))
+                            .id(userId)
                             .name(rs.getString("name"))
                             .login(rs.getString("login"))
                             .email(rs.getString("email"))
                             .birthday(rs.getDate("birthday").toLocalDate())
                             .build();
-                    Set<Integer> userFriends = user.getFriends();
-//        Set<Integer> userFriends = user.getFriends();
+
+                    user.getFriends().addAll(getUserFriendsId(userId));
+
                     return user;
                 });
     }

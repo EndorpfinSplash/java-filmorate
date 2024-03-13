@@ -70,7 +70,7 @@ public class UserController {
     @PutMapping("/{id}/friends/{friendId}")
     public void makeFriendship(@PathVariable Integer id, @PathVariable Integer friendId) {
         log.info("PUT request to create friendship with initiator_id ={} and approver_id ={}.", id, friendId);
-        userService.createFriendship(id, friendId);
+        userService.createFriendship(friendId, id);
         log.info("Request from initiator_id={} to create friendship with approver_id={} saved.", id, friendId);
     }
 
