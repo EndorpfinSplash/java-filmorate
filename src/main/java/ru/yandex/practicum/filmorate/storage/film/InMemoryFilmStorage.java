@@ -40,4 +40,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Optional<Film> getFilmById(Integer filmId) {
         return Optional.ofNullable(films.get(filmId));
     }
+
+    @Override
+    public boolean addLike(Integer filmId, Integer userId) {
+        throw new UnsupportedOperationException();
+    }
 }

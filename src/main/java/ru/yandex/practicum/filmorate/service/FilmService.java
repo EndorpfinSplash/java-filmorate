@@ -58,6 +58,7 @@ public class FilmService {
                 () -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", userId)));
 
         film.getLikes().add(userId);
+        filmStorage.addLike(filmId, userId);
         return film;
     }
 

@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -27,21 +24,20 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getAllFilms() {
-        String sql = "select * from FILM order by ID";
+        String sql = "select * from FILM";
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> {
+                    int filmId = rs.getInt("id");
                     Film film = Film.builder()
-                            .id(rs.getInt("id"))
+                            .id(filmId)
                             .name(rs.getString("title"))
                             .description(rs.getString("description"))
                             .releaseDate(rs.getDate("release_date").toLocalDate())
                             .duration(rs.getInt("duration"))
                             .mpa(Mpa.builder().id(rs.getInt("mpa_id")).build())
                             .build();
-
-//                    film.getLikes().
+                    film.getLikes().addAll(getfilmLikes(filmId));
 //                            film.getGenres()
-
                     return film;
                 });
     }
@@ -85,12 +81,30 @@ public class FilmDbStorage implements FilmStorage {
                     .duration(filmRows.getInt("duration"))
                     .mpa(Mpa.builder().id(filmRows.getInt("mpa_id")).build())
                     .build();
-//            Set<Integer> filmGenres = film.getGenres();
-// TODO: film likes
+            film.getLikes().addAll(getfilmLikes(filmId));
+
             return Optional.of(film);
         } else {
             log.info("фильм с идентификатором {} не найден.", filmId);
             return Optional.empty();
         }
     }
+
+    @Override
+    public boolean addLike(Integer filmId, Integer userId) {
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("FILM_LIKES");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("FILM_ID", filmId);
+        parameters.put("USER_ID", userId);
+        int execute = simpleJdbcInsert.execute(parameters);
+        return execute == 1;
+    }
+
+    private Collection<Integer> getfilmLikes(Integer filmId) {
+        String sql = "select USER_ID from FILM_LIKES where FILM_ID = ?";
+        List<Integer> likers = jdbcTemplate.queryForList(sql, Integer.class, filmId);
+        return new HashSet<>(likers);
+    }
+
 }
