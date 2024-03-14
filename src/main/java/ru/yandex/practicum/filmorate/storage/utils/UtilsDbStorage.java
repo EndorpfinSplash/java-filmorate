@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
-import java.sql.ResultSet;
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 
 
 @Component
@@ -74,12 +74,4 @@ public class UtilsDbStorage {
         }
     }
 
-    public Set<Integer> getUserFriendsId(Integer userId) {
-        String sql =
-                "select APPROVER from FRIENDSHIP where INITIATOR = ? and APPROVE_DATE is not null " +
-                        "union " +
-                        "select INITIATOR from FRIENDSHIP where APPROVER = ? and APPROVE_DATE is null ";
-        List<Integer> friendsIds = jdbcTemplate.query(sql, new Integer[]{userId, userId}, ResultSet::getInt);
-        return new HashSet<>(friendsIds);
-    }
 }

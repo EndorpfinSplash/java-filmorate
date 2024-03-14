@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.storage.utils.UtilsDbStorage;
 
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.Set;
 
 @Service
 public class UtilsService {
@@ -45,8 +44,5 @@ public class UtilsService {
                 );
     }
 
-    public Set<Integer> getUserFriendsId(Integer userId) {
-        return utilsDbStorage.getUserFriendsId(userId);
-    }
 
 }

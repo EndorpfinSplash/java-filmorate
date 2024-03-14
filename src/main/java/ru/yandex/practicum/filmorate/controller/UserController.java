@@ -77,7 +77,7 @@ public class UserController {
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriendship(@PathVariable Integer id, @PathVariable Integer friendId) {
         log.info("Delete request to remove friendship user_id={} and friend_id={} has created.", id, friendId);
-        userService.deleteFriendship(id, friendId);
+        userService.deleteFriendship(friendId, id);
         log.info("Friendship with user_id={} and friend_id={}  has deleted.", id, friendId);
     }
 
