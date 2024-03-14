@@ -1,17 +1,16 @@
-drop table FILM_GENRE;
-
-drop table FILM_LIKES;
-
-drop table FILM;
-
-drop table FRIENDSHIP;
-
-drop table APPLICATION_USER;
-
-drop table GENRE_DICTIONARY;
-
-drop table MPA_DICTIONARY;
-
+-- drop table FILM_GENRE;
+--
+-- drop table FILM_LIKES;
+--
+-- drop table FILM;
+--
+-- drop table FRIENDSHIP;
+--
+-- drop table APPLICATION_USER;
+--
+-- drop table GENRE_DICTIONARY;
+--
+-- drop table MPA_DICTIONARY;
 
 
 CREATE TABLE IF NOT EXISTS application_user

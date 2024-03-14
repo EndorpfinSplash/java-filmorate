@@ -29,7 +29,7 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        return userStorage.createUser(user);
+        return userStorage.saveUser(user);
     }
 
     public User updateUser(User user) {

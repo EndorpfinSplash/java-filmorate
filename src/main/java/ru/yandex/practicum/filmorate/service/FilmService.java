@@ -48,7 +48,7 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
-        return filmStorage.createFilm(film);
+        return filmStorage.saveFilm(film);
     }
 
     public Film setLikeForFilm(Integer filmId, Integer userId) {

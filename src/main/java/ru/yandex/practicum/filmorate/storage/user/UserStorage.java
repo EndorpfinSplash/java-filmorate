@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface UserStorage {
     Collection<User> getAllUsers();
 
-    User createUser(User user);
+    User saveUser(User user);
 
     Optional<User> updateUser(User user);
 
