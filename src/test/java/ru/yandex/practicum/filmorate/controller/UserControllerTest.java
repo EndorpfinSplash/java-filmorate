@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 class UserControllerTest extends FilmorateApplicationHandler {
 
     private static final String ENDPOINT = "/users";
@@ -24,6 +26,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
     ObjectMapper userMapper;
 
     @Autowired
+    @Qualifier("userDbStorage")
     UserStorage userStorage;
 
     @Autowired
@@ -141,7 +144,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .birthday(LocalDate.EPOCH)
                 .build();
         userStorage.saveUser(user2);
-        final User user3 = User.builder()
+        User user3 = User.builder()
                 .login("user2")
                 .email("user2@Login.us")
                 .birthday(LocalDate.EPOCH)
@@ -150,7 +153,9 @@ class UserControllerTest extends FilmorateApplicationHandler {
 
         userService.createFriendship(1, 2);
         userService.createFriendship(1, 3);
-        Integer actual = user1.getFriends().size();
+        userService.createFriendship(2, 3);
+        user3 = userService.getUserById(3);
+        Integer actual = user3.getFriends().size();
         assertEquals(2, actual);
     }
 

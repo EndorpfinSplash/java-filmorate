@@ -53,7 +53,10 @@ public class FilmDbStorage implements FilmStorage {
         parameters.put("DESCRIPTION", film.getDescription());
         parameters.put("RELEASE_DATE", film.getReleaseDate());
         parameters.put("DURATION", film.getDuration());
-        parameters.put("MPA_ID", film.getMpa().getId());
+        Mpa mpa = film.getMpa();
+        if (mpa != null) {
+            parameters.put("MPA_ID", mpa.getId());
+        }
 
         Integer id = (Integer) simpleJdbcInsert.executeAndReturnKey(parameters);
         film.setId(id);

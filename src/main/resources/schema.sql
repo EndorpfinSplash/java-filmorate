@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS friendship
     initiator    integer references application_user (id) ON DELETE CASCADE,
     approver     integer references application_user (id) ON DELETE CASCADE,
     approve_date date,
-    CONSTRAINT self_friendship_constraint CHECK (friendship.initiator != friendship.approver),
-    constraint unique_friendship unique (initiator, approver)
+    constraint unique_friendship unique (initiator, approver),
+    CONSTRAINT self_friendship_constraint CHECK (friendship.initiator != friendship.approver)
 );
 
 

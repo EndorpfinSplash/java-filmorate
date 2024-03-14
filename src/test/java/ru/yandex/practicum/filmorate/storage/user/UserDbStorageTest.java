@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@JdbcTest // указываем, о необходимости подготовить бины для работы с БД
+@JdbcTest
 //@Sql({"schema.sql", "data.sql"})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserDbStorageTest {
@@ -30,14 +30,12 @@ class UserDbStorageTest {
         UserDbStorage userStorage = new UserDbStorage(jdbcTemplate);
         userStorage.saveUser(newUser);
 
-        // вызываем тестируемый метод
         User savedUser = userStorage.getUserById(1).get();
 
-        // проверяем утверждения
         assertThat(savedUser)
-                .isNotNull() // проверяем, что объект не равен null
-                .usingRecursiveComparison() // проверяем, что значения полей нового
-                .isEqualTo(newUser);        // и сохраненного пользователя - совпадают
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(newUser);
     }
 
     @Test
