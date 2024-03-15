@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @JdbcTest
-//@SpringBootTest
 //@Sql({"schema.sql", "data.sql"})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserDbStorageTest {
@@ -172,10 +171,71 @@ class UserDbStorageTest {
     }
 
     @Test
-    void initFriendship() {
+    void test_initMutualFriendship() {
+        User testUser1 = User.builder()
+                .login("testUser1")
+                .name("John Petrov")
+                .email("user1@email.us")
+                .birthday(LocalDate.of(1970, 1, 1))
+                .build();
+        Integer user1Id = userDbStorage.saveUser(testUser1).getId();
+
+        User testUser2 = User.builder()
+                .login("testUser2")
+                .name("John Testovich")
+                .email("userTest@email.us")
+                .birthday(LocalDate.of(2020, 1, 1))
+                .build();
+        Integer user2Id = userDbStorage.saveUser(testUser2).getId();
+
+        userDbStorage.initFriendship(testUser1, testUser2);
+        userDbStorage.initFriendship(testUser2, testUser1);
+
+        Set<Integer> user1FriendsId = userDbStorage.getUserFriendsId(user1Id);
+        assertTrue(
+                user1FriendsId.contains(user2Id) && user1FriendsId.size() == 1,
+                "TestUser1 has to have testUser1 friend");
+
+        Set<Integer> user2FriendsId = userDbStorage.getUserFriendsId(user2Id);
+        assertTrue(
+                user2FriendsId.contains(user1Id) && user2FriendsId.size() == 1,
+                "TestUser2 has to have testUser1 friend");
     }
 
     @Test
     void deleteFriendship() {
+        User testUser1 = User.builder()
+                .login("testUser1")
+                .name("John Smith")
+                .email("user1@email.us")
+                .birthday(LocalDate.of(1970, 1, 1))
+                .build();
+        Integer user1Id = userDbStorage.saveUser(testUser1).getId();
+
+        User testUser2 = User.builder()
+                .login("testUser2")
+                .name("Edwin Testovich")
+                .email("Edwin@email.us")
+                .birthday(LocalDate.of(2010, 1, 1))
+                .build();
+        Integer user2Id = userDbStorage.saveUser(testUser2).getId();
+
+        userDbStorage.initFriendship(testUser1, testUser2);
+
+        Set<Integer> user2FriendsId = userDbStorage.getUserFriendsId(user2Id);
+        assertTrue(
+                user2FriendsId.contains(user1Id) && user2FriendsId.size() == 1,
+                "TestUser2 has to have testUser1 friend");
+
+        userDbStorage.deleteFriendship(testUser1, testUser2);
+
+        user2FriendsId = userDbStorage.getUserFriendsId(user2Id);
+        assertEquals(0, user2FriendsId.size(),
+                "TestUser2 should have not friends");
     }
+
+//    @AfterAll
+//    static void tearDown() {
+//        JdbcTestUtils.deleteFromTables(jdbcTemplate, "APPLICATION_USER", "FRIENDSHIP");
+//    }
 }

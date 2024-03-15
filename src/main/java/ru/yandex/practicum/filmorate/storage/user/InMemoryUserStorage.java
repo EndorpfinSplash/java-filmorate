@@ -3,10 +3,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class InMemoryUserStorage implements UserStorage {
@@ -49,6 +46,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public boolean deleteFriendship(User initiator, User approver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Set<Integer> getUserFriendsId(Integer user2Id) {
         throw new UnsupportedOperationException();
     }
 }
