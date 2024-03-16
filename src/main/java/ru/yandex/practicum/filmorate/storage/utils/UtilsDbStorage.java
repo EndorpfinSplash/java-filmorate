@@ -14,7 +14,7 @@ import java.util.Optional;
 @Component
 public class UtilsDbStorage {
     public static final String SELECT_GENRE_BY_ID = "SELECT * FROM GENRE_DICTIONARY where id = ?";
-    public static final String SELECT_TITLE_BY_ID = "select * from MPA_DICTIONARY where id = ?";
+    public static final String SELECT_MPA_BY_ID = "select * from MPA_DICTIONARY where id = ?";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -37,14 +37,14 @@ public class UtilsDbStorage {
         return jdbcTemplate.query(sql,
                 (rs, rowNum) -> Genre.builder()
                         .id(rs.getInt("id"))
-                        .name(rs.getString("TITLE"))
+                        .name(rs.getString("NAME"))
                         .build());
     }
 
     public Optional<Mpa> getMpaById(Integer mpaId) {
         try {
             Mpa mpa = jdbcTemplate.queryForObject(
-                    SELECT_TITLE_BY_ID,
+                    SELECT_MPA_BY_ID,
                     (rs, rowNum) ->
                             Mpa.builder()
                                     .id(rs.getInt("id"))
@@ -64,8 +64,8 @@ public class UtilsDbStorage {
             Genre genre = jdbcTemplate.queryForObject(
                     SELECT_GENRE_BY_ID,
                     (rs, rowNum) -> Genre.builder()
-                            .id(rs.getInt("id"))
-                            .name(rs.getString("title"))
+                            .id(rs.getInt("ID"))
+                            .name(rs.getString("NAME"))
                             .build(),
                     genreId);
             return Optional.ofNullable(genre);

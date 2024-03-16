@@ -35,7 +35,7 @@ class UserDbStorageTest {
     }
 
     @Test
-    void testGetUserById() {
+    void test_GetUserById() {
         User newUser = User.builder()
                 .login("vanya123")
                 .name("Ivan Petrov")
@@ -96,7 +96,7 @@ class UserDbStorageTest {
     }
 
     @Test
-    void updateUser() {
+    void test_updateUser() {
         User newUser = User.builder()
                 .login("vanya123")
                 .name("Ivan Petrov")
@@ -203,7 +203,7 @@ class UserDbStorageTest {
     }
 
     @Test
-    void deleteFriendship() {
+    void test_deleteFriendship() {
         User testUser1 = User.builder()
                 .login("testUser1")
                 .name("John Smith")
@@ -234,8 +234,4 @@ class UserDbStorageTest {
                 "TestUser2 should have not friends");
     }
 
-//    @AfterAll
-//    static void tearDown() {
-//        JdbcTestUtils.deleteFromTables(jdbcTemplate, "APPLICATION_USER", "FRIENDSHIP");
-//    }
 }

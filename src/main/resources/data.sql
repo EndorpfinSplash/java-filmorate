@@ -1,5 +1,5 @@
 MERGE INTO GENRE_DICTIONARY g
-    USING (SELECT 1 as id, 'Комедия' AS tiltle
+    USING (SELECT 1 as id, 'Комедия' AS name
            FROM dual
            union
            SELECT 2, 'Драма'
@@ -16,10 +16,10 @@ MERGE INTO GENRE_DICTIONARY g
            union
            SELECT 6, 'Боевик'
            FROM dual) b
-ON (g.TITLE = b.tiltle)
+ON (g.name = b.name)
 WHEN NOT MATCHED THEN
-    INSERT (TITLE)
-    VALUES (b.tiltle);
+    INSERT (name)
+    VALUES (b.name);
 
 
 MERGE INTO MPA_DICTIONARY mpa
