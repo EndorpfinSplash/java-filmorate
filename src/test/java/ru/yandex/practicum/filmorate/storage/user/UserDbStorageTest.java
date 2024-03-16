@@ -43,14 +43,14 @@ class UserDbStorageTest {
                 .birthday(LocalDate.of(1990, 1, 1))
                 .build();
 
-        Integer savedId = userDbStorage.saveUser(newUser).getId();
+        User savedUser = userDbStorage.saveUser(newUser);
 
-        User savedUser = userDbStorage.getUserById(savedId).get();
+        User gettedUser = userDbStorage.getUserById(savedUser.getId()).get();
 
         assertThat(savedUser)
                 .isNotNull()
                 .usingRecursiveComparison()
-                .isEqualTo(newUser);
+                .isEqualTo(gettedUser);
     }
 
     @Test
