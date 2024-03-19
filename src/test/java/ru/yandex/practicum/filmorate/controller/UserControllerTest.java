@@ -136,26 +136,26 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .email("This.is.correct@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        userStorage.saveUser(user1);
+        User savedUser1 = userStorage.saveUser(user1);
 
         final User user2 = User.builder()
                 .login("user2")
                 .email("user2@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        userStorage.saveUser(user2);
+        User savedUser2 = userStorage.saveUser(user2);
         User user3 = User.builder()
                 .login("user2")
                 .email("user2@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        userStorage.saveUser(user3);
+        User savedUser3 = userStorage.saveUser(user3);
 
-        userService.createFriendship(1, 2);
-        userService.createFriendship(1, 3);
-        userService.createFriendship(2, 3);
-        user3 = userService.getUserById(3);
-        Integer actual = user3.getFriends().size();
+        userService.createFriendship(savedUser1.getId(), savedUser2.getId());
+        userService.createFriendship(savedUser1.getId(), savedUser3.getId());
+        userService.createFriendship(savedUser2.getId(), savedUser3.getId());
+
+        Integer actual = userService.getUserById(savedUser3.getId()).getFriends().size();
         assertEquals(2, actual);
     }
 

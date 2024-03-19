@@ -1,8 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,15 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @JdbcTest
 //@Sql({"schema.sql", "data.sql"})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserDbStorageTest {
 
     private final JdbcTemplate jdbcTemplate;
-
     private UserDbStorage userDbStorage;
+
+    @BeforeAll
+    void init() {
+        userDbStorage = new UserDbStorage(this.jdbcTemplate);
+    }
 
     @BeforeEach
     void initPreparation() {
-        userDbStorage = new UserDbStorage(this.jdbcTemplate);
         JdbcTestUtils.deleteFromTables(this.jdbcTemplate, "APPLICATION_USER", "FRIENDSHIP");
     }
 
@@ -42,15 +45,14 @@ class UserDbStorageTest {
                 .email("user@email.ru")
                 .birthday(LocalDate.of(1990, 1, 1))
                 .build();
-
         User savedUser = userDbStorage.saveUser(newUser);
 
         User gettedUser = userDbStorage.getUserById(savedUser.getId()).get();
 
-        assertThat(savedUser)
+        assertThat(gettedUser)
                 .isNotNull()
                 .usingRecursiveComparison()
-                .isEqualTo(gettedUser);
+                .isEqualTo(savedUser);
     }
 
     @Test
@@ -88,6 +90,9 @@ class UserDbStorageTest {
                 .build();
 
         User savedUser = userDbStorage.saveUser(newUser);
+
+        System.out.println("newUser.equals(gettedUser) = " + newUser.equals(savedUser));
+        System.out.println("gettedUser.equals(newUser) = " + savedUser.equals(newUser));
 
         assertThat(savedUser)
                 .isNotNull()
@@ -232,6 +237,11 @@ class UserDbStorageTest {
         user2FriendsId = userDbStorage.getUserFriendsId(user2Id);
         assertEquals(0, user2FriendsId.size(),
                 "TestUser2 should have not friends");
+    }
+
+    @AfterAll
+    void tearDown() {
+        JdbcTestUtils.deleteFromTables(this.jdbcTemplate, "APPLICATION_USER", "FRIENDSHIP");
     }
 
 }

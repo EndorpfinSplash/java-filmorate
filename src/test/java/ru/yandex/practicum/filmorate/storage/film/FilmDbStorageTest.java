@@ -1,8 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,14 +24,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FilmDbStorageTest {
 
     private final JdbcTemplate jdbcTemplate;
     private FilmDbStorage filmDbStorage;
 
+    @BeforeAll
+    void init() {
+        filmDbStorage = new FilmDbStorage(jdbcTemplate);
+    }
+
     @BeforeEach
     void initPreparation() {
-        filmDbStorage = new FilmDbStorage(jdbcTemplate);
         JdbcTestUtils.deleteFromTables(this.jdbcTemplate, "FILM", "FILM_LIKES");
     }
 
@@ -157,5 +161,10 @@ class FilmDbStorageTest {
         Set<Integer> filmLikes = filmDbStorage.getFilmById(savedTestFilm1.getId()).get().getLikes();
         assertTrue(filmLikes.contains(savedTestUser.getId()));
         assertEquals(1, filmLikes.size());
+    }
+
+    @AfterAll
+    void tearDown() {
+        JdbcTestUtils.deleteFromTables(this.jdbcTemplate, "FILM", "FILM_LIKES");
     }
 }

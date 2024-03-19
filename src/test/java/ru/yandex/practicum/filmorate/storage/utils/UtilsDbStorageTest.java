@@ -1,8 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.utils;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,19 +15,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UtilsDbStorageTest {
 
     private final JdbcTemplate jdbcTemplate;
-
     private UtilsDbStorage utilsDbStorage;
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    void init() {
         this.utilsDbStorage = new UtilsDbStorage(jdbcTemplate);
-//        JdbcTestUtils.deleteFromTables(jdbcTemplate, "GENRE_DICTIONARY", "MPA_DICTIONARY");
     }
 
     @Test
@@ -36,8 +37,7 @@ class UtilsDbStorageTest {
                 .collect(Collectors.toList());
 
         Arrays.asList("G", "PG", "PG-13", "R", "NC-17").forEach(
-                mpa_titles::contains
-        );
+                mpa -> assertTrue(mpa_titles.contains(mpa)));
     }
 
     @Test
@@ -51,8 +51,8 @@ class UtilsDbStorageTest {
                 "Драма",
                 "Комедия",
                 "Мультфильм",
-                "ТриллерR").forEach(
-                genres_names::contains
+                "Триллер").forEach(
+                genre -> assertTrue(genres_names.contains(genre))
         );
     }
 
