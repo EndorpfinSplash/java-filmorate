@@ -4,22 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @JdbcTest
@@ -47,7 +45,6 @@ class FilmDbStorageTest {
                 .description("Good film!")
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 1, 1))
-                .mpa(Mpa.builder().id(1).build())
                 .build();
 
         Film savedFilm1 = filmDbStorage.saveFilm(testFilm1);
@@ -56,7 +53,6 @@ class FilmDbStorageTest {
                 .description("t".repeat(201))
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 1, 1))
-                .mpa(Mpa.builder().id(1).build())
                 .build();
         Film savedFilm2 = filmDbStorage.saveFilm(testFilm2);
 
@@ -85,6 +81,24 @@ class FilmDbStorageTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(savedFilm1);
+    }
+
+    @Test
+    void test_SaveFilmWithNonUniqueGenres() {
+        final Film testFilm1 = Film.builder()
+                .name("Matrix")
+                .description("Good film!")
+                .duration(120)
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .mpa(Mpa.builder().id(1).build())
+                .build();
+        testFilm1.getGenres()
+                .addAll(List.of(Genre.builder().id(1).build(),
+                                Genre.builder().id(2).build(),
+                                Genre.builder().id(1).build()
+                        )
+                );
+        assertThrows(DuplicateKeyException.class, () -> filmDbStorage.saveFilm(testFilm1));
     }
 
     @Test
@@ -123,7 +137,6 @@ class FilmDbStorageTest {
                 .description("Good film!")
                 .duration(120)
                 .releaseDate(LocalDate.of(2000, 1, 1))
-                .mpa(Mpa.builder().id(1).build())
                 .build();
 
         Film savedFilm1 = filmDbStorage.saveFilm(testFilm1);

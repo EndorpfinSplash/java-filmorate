@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -38,10 +39,11 @@ public class FilmDbStorage implements FilmStorage {
                             .description(rs.getString("description"))
                             .releaseDate(rs.getDate("release_date").toLocalDate())
                             .duration(rs.getInt("duration"))
-                            .mpa(Mpa.builder().id(rs.getInt("mpa_id")).build())
                             .build();
                     film.getLikes().addAll(getFilmLikes(filmId));
-//                    film.getGenres().addAll(getFilmGenres(filmId));
+                    film.getGenres().addAll(getFilmGenres(filmId));
+                    Optional<Mpa> mpaOptional = getMpaById(rs.getInt("mpa_id"));
+                    mpaOptional.ifPresent(film::setMpa);
                     return film;
                 });
     }
@@ -63,16 +65,14 @@ public class FilmDbStorage implements FilmStorage {
             validateMpa(mpaId);
             parameters.put("MPA_ID", mpaId);
         }
+        Integer savedFilmId = (Integer) simpleJdbcInsert.executeAndReturnKey(parameters);
+        film.getGenres().forEach(
+                genre -> {
+                    validateGenre(genre.getId());
+                    setGenreForFilm(savedFilmId, genre.getId());
+                });
 
-//        film.getGenres().forEach(
-//                genre -> {
-//                    validateGenre(genre.getId());
-//                    setGenreForFilm(film.getId(), genre.getId());
-//                });
-
-
-        Integer id = (Integer) simpleJdbcInsert.executeAndReturnKey(parameters);
-        film.setId(id);
+        film.setId(savedFilmId);
         return film;
     }
 
@@ -111,10 +111,11 @@ public class FilmDbStorage implements FilmStorage {
                     .description(filmRows.getString("description"))
                     .releaseDate(filmRows.getDate("release_date").toLocalDate())
                     .duration(filmRows.getInt("duration"))
-                    .mpa(Mpa.builder().id(filmRows.getInt("mpa_id")).build())
                     .build();
             film.getLikes().addAll(getFilmLikes(filmId));
-
+            film.getGenres().addAll(getFilmGenres(filmId));
+            Optional<Mpa> mpaOptional = getMpaById(filmRows.getInt("mpa_id"));
+            mpaOptional.ifPresent(film::setMpa);
             return Optional.of(film);
         } else {
             log.info("фильм с идентификатором {} не найден.", filmId);
@@ -154,10 +155,46 @@ public class FilmDbStorage implements FilmStorage {
         List<Integer> genreIds = jdbcTemplate.queryForList("select GENRE_ID from FILM_GENRE where FILM_ID = ?",
                 Integer.class,
                 filmId);
+        if (genreIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         return genreIds.stream()
-                .map(genreId -> Genre.builder().id(genreId).build())
+                .map(genreId -> getGenreById(genreId).get())
                 .collect(Collectors.toList());
 
+    }
+
+    private Optional<Genre> getGenreById(Integer genreId) {
+        try {
+            Genre genre = jdbcTemplate.queryForObject(
+                    "SELECT * FROM GENRE_DICTIONARY where id = ?",
+                    (rs, rowNum) -> Genre.builder()
+                            .id(rs.getInt("ID"))
+                            .name(rs.getString("NAME"))
+                            .build(),
+                    genreId);
+            return Optional.ofNullable(genre);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Mpa> getMpaById(Integer mpaId) {
+        try {
+            Mpa mpa = jdbcTemplate.queryForObject(
+                    "select * from MPA_DICTIONARY where id = ?",
+                    (rs, rowNum) ->
+                            Mpa.builder()
+                                    .id(rs.getInt("id"))
+                                    .name(rs.getString("title"))
+                                    .description(rs.getString("description"))
+                                    .build(),
+                    mpaId
+            );
+            return Optional.ofNullable(mpa);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
 }
