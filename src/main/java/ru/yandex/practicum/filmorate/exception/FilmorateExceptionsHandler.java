@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class FilmorateExceptionsHandler {
 
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler({
+            ValidationException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse catchValidation(final ValidationException e) {
         return new ErrorResponse("Parameter validation exception", e.getMessage());

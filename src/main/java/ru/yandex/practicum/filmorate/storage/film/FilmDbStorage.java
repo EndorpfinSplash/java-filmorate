@@ -6,10 +6,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
+import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -36,8 +40,8 @@ public class FilmDbStorage implements FilmStorage {
                             .duration(rs.getInt("duration"))
                             .mpa(Mpa.builder().id(rs.getInt("mpa_id")).build())
                             .build();
-                    film.getLikes().addAll(getfilmLikes(filmId));
-//                            film.getGenres()
+                    film.getLikes().addAll(getFilmLikes(filmId));
+//                    film.getGenres().addAll(getFilmGenres(filmId));
                     return film;
                 });
     }
@@ -55,12 +59,37 @@ public class FilmDbStorage implements FilmStorage {
         parameters.put("DURATION", film.getDuration());
         Mpa mpa = film.getMpa();
         if (mpa != null) {
-            parameters.put("MPA_ID", mpa.getId());
+            Integer mpaId = mpa.getId();
+            validateMpa(mpaId);
+            parameters.put("MPA_ID", mpaId);
         }
+
+//        film.getGenres().forEach(
+//                genre -> {
+//                    validateGenre(genre.getId());
+//                    setGenreForFilm(film.getId(), genre.getId());
+//                });
+
 
         Integer id = (Integer) simpleJdbcInsert.executeAndReturnKey(parameters);
         film.setId(id);
         return film;
+    }
+
+    private void validateMpa(Integer mpaId) {
+        String sql = "select count(*) from MPA_DICTIONARY where ID = ?";
+        Integer cntMpaIds = jdbcTemplate.queryForObject(sql, Integer.class, mpaId);
+        if (cntMpaIds == null || cntMpaIds != 1) {
+            throw new ValidationException(MessageFormat.format("Mpa with id={0} doesn't exist", mpaId));
+        }
+    }
+
+    private void validateGenre(Integer genreId) {
+        String sql = "select count(*) from GENRE_DICTIONARY where ID = ?";
+        Integer cntMpaIds = jdbcTemplate.queryForObject(sql, Integer.class, genreId);
+        if (cntMpaIds == null || cntMpaIds != 1) {
+            throw new ValidationException(MessageFormat.format("Genre with id={0} doesn't exist", genreId));
+        }
     }
 
     @Override
@@ -84,7 +113,7 @@ public class FilmDbStorage implements FilmStorage {
                     .duration(filmRows.getInt("duration"))
                     .mpa(Mpa.builder().id(filmRows.getInt("mpa_id")).build())
                     .build();
-            film.getLikes().addAll(getfilmLikes(filmId));
+            film.getLikes().addAll(getFilmLikes(filmId));
 
             return Optional.of(film);
         } else {
@@ -104,10 +133,31 @@ public class FilmDbStorage implements FilmStorage {
         return execute == 1;
     }
 
-    private Collection<Integer> getfilmLikes(Integer filmId) {
+
+    public boolean setGenreForFilm(Integer filmId, Integer genreId) {
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("FILM_GENRE");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("FILM_ID", filmId);
+        parameters.put("GENRE_ID", genreId);
+        int execute = simpleJdbcInsert.execute(parameters);
+        return execute == 1;
+    }
+
+    private Collection<Integer> getFilmLikes(Integer filmId) {
         String sql = "select USER_ID from FILM_LIKES where FILM_ID = ?";
         List<Integer> likers = jdbcTemplate.queryForList(sql, Integer.class, filmId);
         return new HashSet<>(likers);
+    }
+
+    private Collection<Genre> getFilmGenres(Integer filmId) {
+        List<Integer> genreIds = jdbcTemplate.queryForList("select GENRE_ID from FILM_GENRE where FILM_ID = ?",
+                Integer.class,
+                filmId);
+        return genreIds.stream()
+                .map(genreId -> Genre.builder().id(genreId).build())
+                .collect(Collectors.toList());
+
     }
 
 }
