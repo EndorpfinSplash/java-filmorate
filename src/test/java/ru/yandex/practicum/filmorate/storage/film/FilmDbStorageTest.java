@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -17,7 +16,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @JdbcTest
@@ -98,7 +98,8 @@ class FilmDbStorageTest {
                                 Genre.builder().id(1).build()
                         )
                 );
-        assertThrows(DuplicateKeyException.class, () -> filmDbStorage.saveFilm(testFilm1));
+        Film savedFilm = filmDbStorage.saveFilm(testFilm1);
+        assertEquals(2, filmDbStorage.getFilmById(savedFilm.getId()).get().getGenres().size());
     }
 
     @Test

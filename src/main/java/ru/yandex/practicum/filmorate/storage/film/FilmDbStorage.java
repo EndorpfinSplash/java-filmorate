@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -141,7 +142,12 @@ public class FilmDbStorage implements FilmStorage {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("FILM_ID", filmId);
         parameters.put("GENRE_ID", genreId);
-        int execute = simpleJdbcInsert.execute(parameters);
+        int execute = 0;
+        try {
+            execute = simpleJdbcInsert.execute(parameters);
+        } catch (DuplicateKeyException e) {
+            execute = 0;
+        }
         return execute == 1;
     }
 
