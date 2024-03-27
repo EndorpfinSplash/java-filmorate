@@ -32,17 +32,17 @@ class UtilsDbStorageTest {
 
     @Test
     void getAllMpa() {
-        List<String> mpa_titles = utilsDbStorage.getAllMpa().stream()
+        List<String> mpaTitles = utilsDbStorage.getAllMpa().stream()
                 .map(Mpa::getName)
                 .collect(Collectors.toList());
 
         Arrays.asList("G", "PG", "PG-13", "R", "NC-17").forEach(
-                mpa -> assertTrue(mpa_titles.contains(mpa)));
+                mpa -> assertTrue(mpaTitles.contains(mpa)));
     }
 
     @Test
     void getAllGenres() {
-        List<String> genres_names = utilsDbStorage.getAllGenres().stream()
+        List<String> genresNames = utilsDbStorage.getAllGenres().stream()
                 .map(Genre::getName)
                 .collect(Collectors.toList());
 
@@ -52,7 +52,7 @@ class UtilsDbStorageTest {
                 "Комедия",
                 "Мультфильм",
                 "Триллер").forEach(
-                genre -> assertTrue(genres_names.contains(genre))
+                genre -> assertTrue(genresNames.contains(genre))
         );
     }
 
