@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -12,15 +12,12 @@ import java.util.Optional;
 
 
 @Component
+@RequiredArgsConstructor
 public class UtilsDbStorage {
     public static final String SELECT_GENRE_BY_ID = "SELECT * FROM GENRE_DICTIONARY where id = ?";
     public static final String SELECT_MPA_BY_ID = "select * from MPA_DICTIONARY where id = ?";
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public UtilsDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     public Collection<Mpa> getAllMpa() {
         String sql = "select * from MPA_DICTIONARY order by ID";

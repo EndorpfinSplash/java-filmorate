@@ -18,7 +18,7 @@ class FilmControllerTest extends FilmorateApplicationHandler {
     private static final String ENDPOINT = "/films";
     private static final URI RESOURCE_URI = URI.create(SERVER_URL + ENDPOINT);
     @Autowired
-    ObjectMapper filmMapper;
+    private ObjectMapper filmMapper;
 
     @Test
     void create_emptyBody_expect500() throws IOException, InterruptedException {

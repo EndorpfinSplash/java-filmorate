@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
@@ -12,14 +12,10 @@ import java.text.MessageFormat;
 import java.util.Collection;
 
 @Service
+@RequiredArgsConstructor
 public class UtilsService {
 
     private final UtilsDbStorage utilsDbStorage;
-
-    @Autowired
-    public UtilsService(UtilsDbStorage utilsDbStorage) {
-        this.utilsDbStorage = utilsDbStorage;
-    }
 
     public Collection<Mpa> getAllMpa() {
         return utilsDbStorage.getAllMpa();
