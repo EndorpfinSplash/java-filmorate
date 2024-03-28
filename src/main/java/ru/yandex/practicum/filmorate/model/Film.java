@@ -1,20 +1,26 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Film.
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Film {
     public static final LocalDate OLDEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
@@ -30,4 +36,7 @@ public class Film {
     private int duration;
 
     private final Set<Integer> likes = new HashSet<>();
+    private final List<Genre> genres = new ArrayList<>();
+    private Mpa mpa;
+
 }

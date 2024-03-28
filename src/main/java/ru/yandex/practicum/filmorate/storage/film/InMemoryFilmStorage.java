@@ -1,13 +1,12 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.FilmAbsentException;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class InMemoryFilmStorage implements FilmStorage {
@@ -20,7 +19,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film createFilm(Film film) {
+    public Film saveFilm(Film film) {
         film.setId(idFilmCounter);
         films.put(film.getId(), film);
         idFilmCounter++;
@@ -28,19 +27,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film updateFilm(Film film) {
+    public Optional<Film> updateFilm(Film film) {
         int filmId = film.getId();
         if (films.containsKey(filmId)) {
             films.put(filmId, film);
-            return film;
+            return Optional.of(film);
         }
-        throw new FilmAbsentException(film + " absent");
+        return Optional.empty();
     }
 
     @Override
-    public Film getFilmById(Integer id) {
-        return films.computeIfAbsent(id, integer -> {
-            throw new FilmNotFoundException(String.format("Film with id=%s absent", id));
-        });
+    public Optional<Film> getFilmById(Integer filmId) {
+        return Optional.ofNullable(films.get(filmId));
+    }
+
+    @Override
+    public boolean addLike(Integer filmId, Integer userId) {
+        throw new UnsupportedOperationException();
     }
 }

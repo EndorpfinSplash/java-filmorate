@@ -33,9 +33,9 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilm(@PathVariable("id") Integer id) {
-        log.info("GET request to fetch film_id={} received.", id);
-        return filmService.getFilmById(id);
+    public Film getFilm(@PathVariable("id") Integer filmId) {
+        log.info("GET request to fetch film_id={} received.", filmId);
+        return filmService.getFilmById(filmId);
     }
 
     @GetMapping("/popular")

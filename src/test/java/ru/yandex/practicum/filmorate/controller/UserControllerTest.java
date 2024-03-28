@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 class UserControllerTest extends FilmorateApplicationHandler {
 
     private static final String ENDPOINT = "/users";
@@ -24,6 +26,7 @@ class UserControllerTest extends FilmorateApplicationHandler {
     ObjectMapper userMapper;
 
     @Autowired
+    @Qualifier("userDbStorage")
     UserStorage userStorage;
 
     @Autowired
@@ -133,24 +136,26 @@ class UserControllerTest extends FilmorateApplicationHandler {
                 .email("This.is.correct@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        userStorage.createUser(user1);
+        User savedUser1 = userStorage.saveUser(user1);
 
         final User user2 = User.builder()
                 .login("user2")
                 .email("user2@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        userStorage.createUser(user2);
-        final User user3 = User.builder()
+        User savedUser2 = userStorage.saveUser(user2);
+        User user3 = User.builder()
                 .login("user2")
                 .email("user2@Login.us")
                 .birthday(LocalDate.EPOCH)
                 .build();
-        userStorage.createUser(user3);
+        User savedUser3 = userStorage.saveUser(user3);
 
-        userService.createFriendship(1, 2);
-        userService.createFriendship(1, 3);
-        Integer actual = user1.getFriends().size();
+        userService.createFriendship(savedUser1.getId(), savedUser2.getId());
+        userService.createFriendship(savedUser1.getId(), savedUser3.getId());
+        userService.createFriendship(savedUser2.getId(), savedUser3.getId());
+
+        Integer actual = userService.getUserById(savedUser3.getId()).getFriends().size();
         assertEquals(2, actual);
     }
 

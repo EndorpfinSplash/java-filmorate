@@ -1,12 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class InMemoryUserStorage implements UserStorage {
@@ -20,7 +17,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User createUser(User user) {
+    public User saveUser(User user) {
         user.setId(idCounter);
         users.put(user.getId(), user);
         idCounter++;
@@ -28,19 +25,32 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User updateUser(User user) {
+    public Optional<User> updateUser(User user) {
         Integer userId = user.getId();
         if (users.containsKey(userId)) {
             users.put(userId, user);
-            return user;
+            return Optional.of(user);
         }
-        throw new UserNotFoundException(String.format("User with id=%s absent", userId));
+        return Optional.empty();
     }
 
     @Override
-    public User getUserById(Integer id) {
-        return users.computeIfAbsent(id, integer -> {
-            throw new UserNotFoundException(String.format("User with id=%s absent", id));
-        });
+    public Optional<User> getUserById(Integer id) {
+        return Optional.of(users.get(id));
+    }
+
+    @Override
+    public boolean initFriendship(User initiator, User approver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean deleteFriendship(User initiator, User approver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Set<Integer> getUserFriendsId(Integer user2Id) {
+        throw new UnsupportedOperationException();
     }
 }

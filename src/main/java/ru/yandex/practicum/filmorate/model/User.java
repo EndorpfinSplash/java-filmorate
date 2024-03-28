@@ -13,9 +13,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Film.
- */
 @Data
 @Builder
 @EqualsAndHashCode
@@ -36,6 +33,4 @@ public class User {
     public String getName() {
         return (name == null || name.isEmpty()) ? login : name;
     }
-
-    //    @EqualsAndHashCode.Exclude
 }
