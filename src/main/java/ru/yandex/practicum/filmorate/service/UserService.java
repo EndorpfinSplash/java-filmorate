@@ -49,7 +49,6 @@ public class UserService {
         User friend2User = userStorage.getUserById(friend2)
                 .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", friend2)));
         friend1User.getFriends().add(friend2);
-        friend2User.getFriends().add(friend1);
         userStorage.initFriendship(friend1User, friend2User);
     }
 
@@ -60,7 +59,6 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", friend2)));
 
         friend1User.getFriends().remove(friend2);
-        friend2User.getFriends().remove(friend1);
         userStorage.deleteFriendship(friend1User, friend2User);
     }
 
