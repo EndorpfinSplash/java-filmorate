@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,14 +14,10 @@ import java.util.Collection;
 @RestController
 @Slf4j
 @RequestMapping("/genres")
+@RequiredArgsConstructor
 public class GenreController {
 
     private final UtilsService utilsService;
-
-    @Autowired
-    public GenreController(UtilsService utilsService) {
-        this.utilsService = utilsService;
-    }
 
     @GetMapping
     public Collection<Genre> getAllMpa() {
