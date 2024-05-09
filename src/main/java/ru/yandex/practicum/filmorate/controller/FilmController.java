@@ -65,9 +65,9 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public Film setLike(@PathVariable("id") Integer filmId, @PathVariable("userId") Integer userId) {
         log.info("PUT request to set like from user_id={} for film_id={}.", userId, filmId);
-
+        Film film = filmService.setLikeForFilm(filmId, userId);
         log.info("Like from user_id={} for film_id={} was set", userId, filmId);
-        return filmService.setLikeForFilm(filmId, userId);
+        return film;
     }
 
     @DeleteMapping("/{id}/like/{userId}")

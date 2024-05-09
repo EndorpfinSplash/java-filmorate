@@ -5,9 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -17,7 +18,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+@Repository
 @Slf4j
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
@@ -26,22 +27,23 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Collection<Film> getAllFilms() {
         String sql = "select * from FILM";
+        RowMapper<Film> filmRowMapper = (rs, rowNum) -> {
+            int filmId = rs.getInt("id");
+            Film film = Film.builder()
+                    .id(filmId)
+                    .name(rs.getString("title"))
+                    .description(rs.getString("description"))
+                    .releaseDate(rs.getDate("release_date").toLocalDate())
+                    .duration(rs.getInt("duration"))
+                    .build();
+            film.getLikes().addAll(getFilmLikes(filmId));
+            film.getGenres().addAll(getFilmGenres(filmId));
+            Optional<Mpa> mpaOptional = getMpaById(rs.getInt("mpa_id"));
+            mpaOptional.ifPresent(film::setMpa);
+            return film;
+        };
         return jdbcTemplate.query(sql,
-                (rs, rowNum) -> {
-                    int filmId = rs.getInt("id");
-                    Film film = Film.builder()
-                            .id(filmId)
-                            .name(rs.getString("title"))
-                            .description(rs.getString("description"))
-                            .releaseDate(rs.getDate("release_date").toLocalDate())
-                            .duration(rs.getInt("duration"))
-                            .build();
-                    film.getLikes().addAll(getFilmLikes(filmId));
-                    film.getGenres().addAll(getFilmGenres(filmId));
-                    Optional<Mpa> mpaOptional = getMpaById(rs.getInt("mpa_id"));
-                    mpaOptional.ifPresent(film::setMpa);
-                    return film;
-                });
+                filmRowMapper);
     }
 
     @Override

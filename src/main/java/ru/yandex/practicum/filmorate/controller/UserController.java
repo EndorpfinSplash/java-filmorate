@@ -23,6 +23,15 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PutMapping
+    public User updateUser(@Valid @RequestBody User user) {
+        log.info("PUT request to update {} received.", user);
+        validateUser(user);
+        User createdUser = userService.updateUser(user);
+        log.info("{} was updated", user);
+        return createdUser;
+    }
+
     @GetMapping
     public Collection<User> getAllUsers() {
         log.info("GET request to fetch collection of users received.");
@@ -55,15 +64,6 @@ public class UserController {
         validateUser(user);
         User createdUser = userService.createUser(user);
         log.info("{} was created", user);
-        return createdUser;
-    }
-
-    @PutMapping
-    public User updateUser(@Valid @RequestBody User user) {
-        log.info("PUT request to update {} received.", user);
-        validateUser(user);
-        User createdUser = userService.updateUser(user);
-        log.info("{} was updated", user);
         return createdUser;
     }
 

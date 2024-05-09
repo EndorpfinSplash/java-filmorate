@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class UtilsDbStorage {
     public static final String SELECT_GENRE_BY_ID = "SELECT * FROM GENRE_DICTIONARY where id = ?";
